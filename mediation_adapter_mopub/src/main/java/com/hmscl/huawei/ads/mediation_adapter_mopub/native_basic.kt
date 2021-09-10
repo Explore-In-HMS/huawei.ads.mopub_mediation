@@ -43,8 +43,8 @@ class native_basic : CustomEventNative() {
     private val KEY_EXTRA_AD_CHOICES_PLACEMENT = HuaweiAdsCustomEventDataKeys.KEY_EXTRA_AD_CHOICES_PLACEMENT
     private val KEY_EXPERIMENTAL_EXTRA_SWAP_MARGINS = HuaweiAdsCustomEventDataKeys.KEY_EXPERIMENTAL_EXTRA_SWAP_MARGINS
     private val KEY_CONTENT_URL = HuaweiAdsCustomEventDataKeys.CONTENT_URL_KEY
-    private val TAG_FOR_CHILD_DIRECTED_KEY = HuaweiAdsCustomEventDataKeys.TAG_FOR_CHILD_DIRECTED_KEY
-    private val TAG_FOR_UNDER_AGE_OF_CONSENT_KEY = HuaweiAdsCustomEventDataKeys.TAG_FOR_UNDER_AGE_OF_CONSENT_KEY
+    private val TAG_FOR_CHILD_DIRECTED_KEY = HuaweiAdsCustomEventDataKeys.TAG_FOR_CHILD_PROTECTION_KEY
+    private val TAG_FOR_UNDER_AGE_OF_CONSENT_KEY = HuaweiAdsCustomEventDataKeys.TAG_FOR_UNDER_AGE_OF_PROMISE_KEY
     private val ADAPTER_NAME = native_advanced::class.java.simpleName
     private val sIsInitialized = AtomicBoolean(false)
     private var mAdUnitId: String? = null

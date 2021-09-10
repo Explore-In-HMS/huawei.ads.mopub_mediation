@@ -21,6 +21,7 @@ import android.content.Context
 import android.text.TextUtils
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsAdapterConfiguration
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys
+import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.prepareBuilderViaExtras
 import com.huawei.hms.ads.AdParam
 import com.huawei.hms.ads.HwAds
 import com.huawei.hms.ads.TagForChild
@@ -44,9 +45,9 @@ class rewarded : BaseAd() {
     private val KEY_EXTRA_APPLICATION_ID = HuaweiAdsCustomEventDataKeys.KEY_EXTRA_APPLICATION_ID
     private val KEY_EXTRA_AD_UNIT_ID = HuaweiAdsCustomEventDataKeys.AD_UNIT_ID_KEY
     private val KEY_CONTENT_URL = HuaweiAdsCustomEventDataKeys.CONTENT_URL_KEY
-    private val TAG_FOR_CHILD_DIRECTED_KEY = HuaweiAdsCustomEventDataKeys.TAG_FOR_CHILD_DIRECTED_KEY
+    private val TAG_FOR_CHILD_DIRECTED_KEY = HuaweiAdsCustomEventDataKeys.TAG_FOR_CHILD_PROTECTION_KEY
     private val TAG_FOR_UNDER_AGE_OF_CONSENT_KEY =
-        HuaweiAdsCustomEventDataKeys.TAG_FOR_UNDER_AGE_OF_CONSENT_KEY
+        HuaweiAdsCustomEventDataKeys.TAG_FOR_UNDER_AGE_OF_PROMISE_KEY
     private val ADAPTER_NAME: String = rewarded::class.java.getSimpleName()
     private var sIsInitialized = AtomicBoolean(false)
     private var mAdUnitId: String? = null
@@ -133,31 +134,8 @@ class rewarded : BaseAd() {
             builder.setTargetingContentUrl(contentUrl)
         }
 
-        val requestConfigurationBuilder = HwAds.getRequestOptions().toBuilder()
+        val requestConfigurationBuilder = prepareBuilderViaExtras(extras)
 
-        val childDirected = extras[TAG_FOR_CHILD_DIRECTED_KEY]
-        if (childDirected != null) {
-            if (java.lang.Boolean.parseBoolean(childDirected)) {
-                requestConfigurationBuilder.setTagForChildProtection(TagForChild.TAG_FOR_CHILD_PROTECTION_TRUE)
-            } else {
-                requestConfigurationBuilder.setTagForChildProtection(TagForChild.TAG_FOR_CHILD_PROTECTION_FALSE)
-            }
-        } else {
-            requestConfigurationBuilder.setTagForChildProtection(TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED)
-        }
-
-        // Publishers may want to mark their requests to receive treatment for users in the
-        // European Economic Area (EEA) under the age of consent.
-        val underAgeOfConsent = extras[TAG_FOR_UNDER_AGE_OF_CONSENT_KEY]
-        if (underAgeOfConsent != null) {
-            if (java.lang.Boolean.parseBoolean(underAgeOfConsent)) {
-                requestConfigurationBuilder.setTagForUnderAgeOfPromise(UnderAge.PROMISE_TRUE)
-            } else {
-                requestConfigurationBuilder.setTagForUnderAgeOfPromise(UnderAge.PROMISE_FALSE)
-            }
-        } else {
-            requestConfigurationBuilder.setTagForUnderAgeOfPromise(UnderAge.PROMISE_UNSPECIFIED)
-        }
         val requestConfiguration = requestConfigurationBuilder.build()
         HwAds.setRequestOptions(requestConfiguration)
         val adRequest = builder.build()

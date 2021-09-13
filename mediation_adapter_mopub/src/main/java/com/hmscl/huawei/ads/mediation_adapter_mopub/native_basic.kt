@@ -24,6 +24,10 @@ import com.hmscl.huawei.ads.mediation_adapter_mopub.native_advanced.Companion.HT
 import com.hmscl.huawei.ads.mediation_adapter_mopub.native_advanced.Companion.HTTP_TAG
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsAdapterConfiguration
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys
+import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys.Companion.CONTENT_URL_KEY
+import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys.Companion.KEY_EXPERIMENTAL_EXTRA_SWAP_MARGINS
+import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys.Companion.KEY_EXTRA_AD_CHOICES_PLACEMENT
+import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys.Companion.KEY_EXTRA_ORIENTATION_PREFERENCE
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.prepareBuilderViaExtras
 import com.huawei.hms.ads.*
 import com.huawei.hms.ads.nativead.NativeAd
@@ -40,10 +44,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 class native_basic : CustomEventNative() {
     private val KEY_EXTRA_AD_UNIT_ID = HuaweiAdsCustomEventDataKeys.AD_UNIT_ID_KEY
-    private val KEY_EXTRA_ORIENTATION_PREFERENCE = HuaweiAdsCustomEventDataKeys.KEY_EXTRA_ORIENTATION_PREFERENCE
-    private val KEY_EXTRA_AD_CHOICES_PLACEMENT = HuaweiAdsCustomEventDataKeys.KEY_EXTRA_AD_CHOICES_PLACEMENT
-    private val KEY_EXPERIMENTAL_EXTRA_SWAP_MARGINS = HuaweiAdsCustomEventDataKeys.KEY_EXPERIMENTAL_EXTRA_SWAP_MARGINS
-    private val KEY_CONTENT_URL = HuaweiAdsCustomEventDataKeys.CONTENT_URL_KEY
     private val ADAPTER_NAME = native_advanced::class.java.simpleName
     private val sIsInitialized = AtomicBoolean(false)
     private var mAdUnitId: String? = null
@@ -91,19 +91,18 @@ class native_basic : CustomEventNative() {
             val optionsBuilder = NativeAdConfiguration.Builder()
             optionsBuilder.setRequestMultiImages(false)
 
-            if (localExtras.containsKey(KEY_EXTRA_ORIENTATION_PREFERENCE)
-                    && isValidOrientationExtra(localExtras[KEY_EXTRA_ORIENTATION_PREFERENCE])
-            ) {
+            if (localExtras.containsKey(KEY_EXTRA_ORIENTATION_PREFERENCE) && isValidOrientationExtra(localExtras[KEY_EXTRA_ORIENTATION_PREFERENCE])) {
                 optionsBuilder.setMediaDirection(localExtras[KEY_EXTRA_ORIENTATION_PREFERENCE] as Int)
+            } else if (serverExtras.containsKey(KEY_EXTRA_ORIENTATION_PREFERENCE) && isValidOrientationExtra(serverExtras[KEY_EXTRA_ORIENTATION_PREFERENCE])) {
+                optionsBuilder.setMediaDirection(serverExtras[KEY_EXTRA_ORIENTATION_PREFERENCE] as Int)
             }
 
-            if (localExtras.containsKey(KEY_EXTRA_AD_CHOICES_PLACEMENT)
-                    && isValidAdChoicesPlacementExtra(
-                            localExtras[KEY_EXTRA_AD_CHOICES_PLACEMENT]
-                    )
-            ) {
+            if (localExtras.containsKey(KEY_EXTRA_AD_CHOICES_PLACEMENT) && isValidAdChoicesPlacementExtra(localExtras[KEY_EXTRA_AD_CHOICES_PLACEMENT])) {
                 optionsBuilder.setChoicesPosition(localExtras[KEY_EXTRA_AD_CHOICES_PLACEMENT] as Int)
+            } else if (serverExtras.containsKey(KEY_EXTRA_AD_CHOICES_PLACEMENT) && isValidAdChoicesPlacementExtra(serverExtras[KEY_EXTRA_AD_CHOICES_PLACEMENT])) {
+                optionsBuilder.setChoicesPosition(serverExtras[KEY_EXTRA_AD_CHOICES_PLACEMENT] as Int)
             }
+
             val adOptions = optionsBuilder.build()
             val adLoader = builder.setNativeAdLoadedListener {
                 it
@@ -182,9 +181,11 @@ class native_basic : CustomEventNative() {
             requestBuilder.setRequestOrigin("MoPub")
 
             // Publishers may append a content URL by passing it to the MoPubNative.setLocalExtras() call.
-            val contentUrl = localExtras[KEY_CONTENT_URL] as String?
+            val contentUrl = localExtras[CONTENT_URL_KEY] as String?
             if (!TextUtils.isEmpty(contentUrl)) {
                 requestBuilder.setTargetingContentUrl(contentUrl)
+            } else if (!TextUtils.isEmpty(serverExtras[CONTENT_URL_KEY])) {
+                requestBuilder.setTargetingContentUrl(serverExtras[CONTENT_URL_KEY])
             }
 
             /**

@@ -24,6 +24,7 @@ import com.hmscl.huawei.ads.mediation_adapter_mopub.native_advanced.Companion.HT
 import com.hmscl.huawei.ads.mediation_adapter_mopub.native_advanced.Companion.HTTP_TAG
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsAdapterConfiguration
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys
+import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.prepareBuilderViaExtras
 import com.huawei.hms.ads.*
 import com.huawei.hms.ads.nativead.NativeAd
 import com.huawei.hms.ads.nativead.NativeAdConfiguration
@@ -187,31 +188,11 @@ class native_basic : CustomEventNative() {
             if (!TextUtils.isEmpty(contentUrl)) {
                 requestBuilder.setTargetingContentUrl(contentUrl)
             }
-            val requestConfigurationBuilder = HwAds.getRequestOptions().toBuilder()
+            //val requestConfigurationBuilder = HwAds.getRequestOptions().toBuilder()
 
-            val childDirected = localExtras[TAG_FOR_CHILD_DIRECTED_KEY]
-            if (childDirected != null) {
-                if (childDirected.toString().toBoolean()) {
-                    requestConfigurationBuilder.setTagForChildProtection(TagForChild.TAG_FOR_CHILD_PROTECTION_TRUE)
-                } else {
-                    requestConfigurationBuilder.setTagForChildProtection(TagForChild.TAG_FOR_CHILD_PROTECTION_FALSE)
-                }
-            } else {
-                requestConfigurationBuilder.setTagForChildProtection(TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED)
-            }
+            localExtras.mapValues { it.value.toString() }
+            val requestConfigurationBuilder = prepareBuilderViaExtras(localExtras as HashMap<String, String>)
 
-            // Publishers may want to mark their requests to receive treatment for users in the
-            // European Economic Area (EEA) under the age of consent.
-            val underAgeOfConsent = localExtras[TAG_FOR_UNDER_AGE_OF_CONSENT_KEY]
-            if (underAgeOfConsent != null) {
-                if (underAgeOfConsent.toString().toBoolean()) {
-                    requestConfigurationBuilder.setTagForUnderAgeOfPromise(UnderAge.PROMISE_TRUE)
-                } else {
-                    requestConfigurationBuilder.setTagForUnderAgeOfPromise(UnderAge.PROMISE_FALSE)
-                }
-            } else {
-                requestConfigurationBuilder.setTagForUnderAgeOfPromise(UnderAge.PROMISE_UNSPECIFIED)
-            }
             val requestConfiguration = requestConfigurationBuilder.build()
             HwAds.setRequestOptions(requestConfiguration)
 

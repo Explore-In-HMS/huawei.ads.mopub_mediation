@@ -73,9 +73,13 @@ class interstitial : BaseAd() {
 
         val requestConfigurationBuilder = prepareBuilderViaExtras(extras)
 
+        /**
+         * Prepare Child-protection keys
+         */
         val requestConfiguration = requestConfigurationBuilder.build()
         HwAds.setRequestOptions(requestConfiguration)
         val adRequest = builder.build()
+
         mHuaweiInterstitialAd!!.loadAd(adRequest)
         MoPubLog.log(adNetworkId, AdapterLogEvent.LOAD_ATTEMPTED, ADAPTER_NAME)
     }

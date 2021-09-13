@@ -50,27 +50,12 @@ fun prepareBuilderViaExtras(extras: Map<String, String>): RequestOptions.Builder
     }
 
     /**
-     * Sets the type of ads to be requested. The HUAWEI Ads SDK supports two types of ads:
-     * personalized and non-personalized.
+     * Sets the tag for child-directed content, to comply with the Children's Online Privacy Protection Act (COPPA).
      * The options are as follows:
-     * allowAll: personalized and non-personalized ads.
-     * allowNonPersonalized: non-personalized ads.
+     * protectionTrue: You want your ad content to be COPPA-compliant (interest-based ads and remarketing ads will be disabled for the ad request).
+     * protectionFalse: You do not want your ad content to be COPPA-compliant.
+     * protectionUnspecified: You have not specified whether your ad content needs to be COPPA-compliant.
      */
-    val nonPersonalizedAd = extras[HuaweiAdsCustomEventDataKeys.TAG_FOR_NON_PERSONALIZED_AD_KEY]
-    if (nonPersonalizedAd != null) {
-        try {
-            when (nonPersonalizedAd) {
-                HuaweiContentClassificationKey.KEY_0 -> requestConfigurationBuilder.setNonPersonalizedAd(NonPersonalizedAd.ALLOW_ALL)
-                HuaweiContentClassificationKey.KEY_1 -> requestConfigurationBuilder.setNonPersonalizedAd(NonPersonalizedAd.ALLOW_NON_PERSONALIZED)
-                else -> {
-                    // No operation
-                }
-            }
-        } catch (e: Exception) {
-            // No operation
-        }
-    }
-
     val childProtection = extras[TAG_FOR_CHILD_PROTECTION_KEY]
     if (childProtection != null) {
         try {
@@ -86,7 +71,9 @@ fun prepareBuilderViaExtras(extras: Map<String, String>): RequestOptions.Builder
         requestConfigurationBuilder.setTagForChildProtection(TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED)
     }
 
-
+    /**
+     * Sets whether to process ad requests as directed to users under the age of consent.
+     */
     // Publishers may want to mark their requests to receive treatment for users in the
     // European Economic Area (EEA) under the age of consent.
     val underAgeOfPromise = extras[TAG_FOR_UNDER_AGE_OF_PROMISE_KEY]

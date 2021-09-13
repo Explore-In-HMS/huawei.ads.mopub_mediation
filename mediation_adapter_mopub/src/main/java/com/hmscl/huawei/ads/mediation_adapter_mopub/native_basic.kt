@@ -35,7 +35,7 @@ import com.mopub.nativeads.CustomEventNative
 import com.mopub.nativeads.NativeErrorCode
 import com.mopub.nativeads.NativeImageHelper
 import com.mopub.nativeads.StaticNativeAd
-import java.util.ArrayList
+import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
 class native_basic : CustomEventNative() {
@@ -44,18 +44,16 @@ class native_basic : CustomEventNative() {
     private val KEY_EXTRA_AD_CHOICES_PLACEMENT = HuaweiAdsCustomEventDataKeys.KEY_EXTRA_AD_CHOICES_PLACEMENT
     private val KEY_EXPERIMENTAL_EXTRA_SWAP_MARGINS = HuaweiAdsCustomEventDataKeys.KEY_EXPERIMENTAL_EXTRA_SWAP_MARGINS
     private val KEY_CONTENT_URL = HuaweiAdsCustomEventDataKeys.CONTENT_URL_KEY
-    private val TAG_FOR_CHILD_DIRECTED_KEY = HuaweiAdsCustomEventDataKeys.TAG_FOR_CHILD_PROTECTION_KEY
-    private val TAG_FOR_UNDER_AGE_OF_CONSENT_KEY = HuaweiAdsCustomEventDataKeys.TAG_FOR_UNDER_AGE_OF_PROMISE_KEY
     private val ADAPTER_NAME = native_advanced::class.java.simpleName
     private val sIsInitialized = AtomicBoolean(false)
     private var mAdUnitId: String? = null
     private var mHuaweiAdapterConfiguration = HuaweiAdsAdapterConfiguration()
 
     override fun loadNativeAd(
-        context: Context,
-        customEventNativeListener: CustomEventNativeListener,
-        localExtras: Map<String?, Any?>,
-        serverExtras: Map<String?, String?>
+            context: Context,
+            customEventNativeListener: CustomEventNativeListener,
+            localExtras: Map<String?, Any?>,
+            serverExtras: Map<String, String>
     ) {
         Preconditions.checkNotNull(context)
         Preconditions.checkNotNull(customEventNativeListener)
@@ -67,22 +65,22 @@ class native_basic : CustomEventNative() {
         if (TextUtils.isEmpty(mAdUnitId)) {
             customEventNativeListener.onNativeAdFailed(NativeErrorCode.NETWORK_NO_FILL)
             MoPubLog.log(getAdNetworkId(), MoPubLog.AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
-                NativeErrorCode.NETWORK_NO_FILL.intCode,
-                NativeErrorCode.NETWORK_NO_FILL
+                    NativeErrorCode.NETWORK_NO_FILL.intCode,
+                    NativeErrorCode.NETWORK_NO_FILL
             )
             return
         }
         val nativeAd = HuaweiNativeAd(customEventNativeListener)
-        nativeAd.loadAd(context, mAdUnitId, localExtras)
+        nativeAd.loadAd(context, mAdUnitId, localExtras, serverExtras)
         mHuaweiAdapterConfiguration.setCachedInitializationParameters(context, serverExtras)
     }
 
     inner class HuaweiNativeAd(private var mCustomEventNativeListener: CustomEventNativeListener?) :
-    StaticNativeAd() {
+            StaticNativeAd() {
         var shouldSwapMargins = false
         var huaweiNativeAd: NativeAd? = null
 
-        fun loadAd(context: Context, adUnitId: String?,localExtras: Map<String?, Any?>) {
+        fun loadAd(context: Context, adUnitId: String?, localExtras: Map<String?, Any?>, serverExtras: Map<String, String>) {
             val builder = NativeAdLoader.Builder(context, adUnitId)
             if (localExtras.containsKey(KEY_EXPERIMENTAL_EXTRA_SWAP_MARGINS)) {
                 val swapMarginExtra = localExtras[KEY_EXPERIMENTAL_EXTRA_SWAP_MARGINS]
@@ -94,15 +92,15 @@ class native_basic : CustomEventNative() {
             optionsBuilder.setRequestMultiImages(false)
 
             if (localExtras.containsKey(KEY_EXTRA_ORIENTATION_PREFERENCE)
-                && isValidOrientationExtra(localExtras[KEY_EXTRA_ORIENTATION_PREFERENCE])
+                    && isValidOrientationExtra(localExtras[KEY_EXTRA_ORIENTATION_PREFERENCE])
             ) {
                 optionsBuilder.setMediaDirection(localExtras[KEY_EXTRA_ORIENTATION_PREFERENCE] as Int)
             }
 
             if (localExtras.containsKey(KEY_EXTRA_AD_CHOICES_PLACEMENT)
-                && isValidAdChoicesPlacementExtra(
-                    localExtras[KEY_EXTRA_AD_CHOICES_PLACEMENT]
-                )
+                    && isValidAdChoicesPlacementExtra(
+                            localExtras[KEY_EXTRA_AD_CHOICES_PLACEMENT]
+                    )
             ) {
                 optionsBuilder.setChoicesPosition(localExtras[KEY_EXTRA_AD_CHOICES_PLACEMENT] as Int)
             }
@@ -111,17 +109,17 @@ class native_basic : CustomEventNative() {
                 it
                 if (!isValidHuaweiNativeAd(it)) {
                     MoPubLog.log(
-                        getAdNetworkId(), MoPubLog.AdapterLogEvent.CUSTOM, ADAPTER_NAME,
-                        "The Huawei native unified ad is missing one or " +
-                                "more required assets, failing request."
+                            getAdNetworkId(), MoPubLog.AdapterLogEvent.CUSTOM, ADAPTER_NAME,
+                            "The Huawei native unified ad is missing one or " +
+                                    "more required assets, failing request."
                     )
                     mCustomEventNativeListener!!.onNativeAdFailed(
-                        NativeErrorCode.NETWORK_NO_FILL
+                            NativeErrorCode.NETWORK_NO_FILL
                     )
                     MoPubLog.log(
-                        getAdNetworkId(), MoPubLog.AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
-                        NativeErrorCode.NETWORK_NO_FILL.intCode,
-                        NativeErrorCode.NETWORK_NO_FILL
+                            getAdNetworkId(), MoPubLog.AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
+                            NativeErrorCode.NETWORK_NO_FILL.intCode,
+                            NativeErrorCode.NETWORK_NO_FILL
                     )
                 } else {
                     huaweiNativeAd = it
@@ -132,7 +130,7 @@ class native_basic : CustomEventNative() {
                     if (it.icon != null) {
                         val iconImage: Image = it.icon
                         // Assuming that the URI provided is an URL.
-                        imageUrls.add(iconImage.uri.toString().replace(HTTP_TAG,HTTPS_TAG))
+                        imageUrls.add(iconImage.uri.toString().replace(HTTP_TAG, HTTPS_TAG))
                     }
                     preCacheImages(context, imageUrls)
                 }
@@ -151,30 +149,30 @@ class native_basic : CustomEventNative() {
 
                 override fun onAdFailed(loadAdError: Int) {
                     MoPubLog.log(
-                        getAdNetworkId(), MoPubLog.AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
-                        NativeErrorCode.NETWORK_NO_FILL.intCode,
-                        NativeErrorCode.NETWORK_NO_FILL
+                            getAdNetworkId(), MoPubLog.AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
+                            NativeErrorCode.NETWORK_NO_FILL.intCode,
+                            NativeErrorCode.NETWORK_NO_FILL
                     )
                     MoPubLog.log(
-                        getAdNetworkId(), MoPubLog.AdapterLogEvent.CUSTOM, ADAPTER_NAME, "Failed to " +
-                                "load Huawei native ad with message: " + loadAdError +
-                                ". Caused by: " + loadAdError
+                            getAdNetworkId(), MoPubLog.AdapterLogEvent.CUSTOM, ADAPTER_NAME, "Failed to " +
+                            "load Huawei native ad with message: " + loadAdError +
+                            ". Caused by: " + loadAdError
                     )
                     when (loadAdError) {
                         AdParam.ErrorCode.INNER -> mCustomEventNativeListener!!.onNativeAdFailed(
-                            NativeErrorCode.NATIVE_ADAPTER_CONFIGURATION_ERROR
+                                NativeErrorCode.NATIVE_ADAPTER_CONFIGURATION_ERROR
                         )
                         AdParam.ErrorCode.INVALID_REQUEST -> mCustomEventNativeListener!!.onNativeAdFailed(
-                            NativeErrorCode.NETWORK_INVALID_REQUEST
+                                NativeErrorCode.NETWORK_INVALID_REQUEST
                         )
                         AdParam.ErrorCode.NETWORK_ERROR -> mCustomEventNativeListener!!.onNativeAdFailed(
-                            NativeErrorCode.CONNECTION_ERROR
+                                NativeErrorCode.CONNECTION_ERROR
                         )
                         AdParam.ErrorCode.NO_AD -> mCustomEventNativeListener!!.onNativeAdFailed(
-                            NativeErrorCode.NETWORK_NO_FILL
+                                NativeErrorCode.NETWORK_NO_FILL
                         )
                         else -> mCustomEventNativeListener!!.onNativeAdFailed(
-                            NativeErrorCode.UNSPECIFIED
+                                NativeErrorCode.UNSPECIFIED
                         )
                     }
                 }
@@ -188,11 +186,11 @@ class native_basic : CustomEventNative() {
             if (!TextUtils.isEmpty(contentUrl)) {
                 requestBuilder.setTargetingContentUrl(contentUrl)
             }
-            //val requestConfigurationBuilder = HwAds.getRequestOptions().toBuilder()
 
-            localExtras.mapValues { it.value.toString() }
-            val requestConfigurationBuilder = prepareBuilderViaExtras(localExtras as HashMap<String, String>)
-
+            /**
+             * Prepare Child-protection keys
+             */
+            val requestConfigurationBuilder = prepareBuilderViaExtras(serverExtras)
             val requestConfiguration = requestConfigurationBuilder.build()
             HwAds.setRequestOptions(requestConfiguration)
 
@@ -242,36 +240,36 @@ class native_basic : CustomEventNative() {
 
         private fun preCacheImages(context: Context, imageUrls: List<String>) {
             NativeImageHelper.preCacheImages(context, imageUrls,
-                object : NativeImageHelper.ImageListener {
-                    override fun onImagesCached() {
-                        if (huaweiNativeAd != null) {
-                            prepareHuaweiNativeAd(huaweiNativeAd!!)
-                            mCustomEventNativeListener!!.onNativeAdLoaded(this@HuaweiNativeAd)
+                    object : NativeImageHelper.ImageListener {
+                        override fun onImagesCached() {
+                            if (huaweiNativeAd != null) {
+                                prepareHuaweiNativeAd(huaweiNativeAd!!)
+                                mCustomEventNativeListener!!.onNativeAdLoaded(this@HuaweiNativeAd)
+                                MoPubLog.log(
+                                        getAdNetworkId(),
+                                        MoPubLog.AdapterLogEvent.LOAD_SUCCESS,
+                                        ADAPTER_NAME
+                                )
+                            }
+                        }
+
+                        override fun onImagesFailedToCache(errorCode: NativeErrorCode) {
+                            mCustomEventNativeListener!!.onNativeAdFailed(errorCode)
                             MoPubLog.log(
-                                getAdNetworkId(),
-                                MoPubLog.AdapterLogEvent.LOAD_SUCCESS,
-                                ADAPTER_NAME
+                                    getAdNetworkId(), MoPubLog.AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
+                                    errorCode.intCode,
+                                    errorCode
                             )
                         }
-                    }
-
-                    override fun onImagesFailedToCache(errorCode: NativeErrorCode) {
-                        mCustomEventNativeListener!!.onNativeAdFailed(errorCode)
-                        MoPubLog.log(
-                            getAdNetworkId(), MoPubLog.AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
-                            errorCode.intCode,
-                            errorCode
-                        )
-                    }
-                })
+                    })
         }
 
         private fun prepareHuaweiNativeAd(mHuaweiNativeAd: NativeAd) {
             val images: List<Image> = mHuaweiNativeAd.images
-            mainImageUrl = images[0].uri.toString().replace(HTTP_TAG,HTTPS_TAG)
+            mainImageUrl = images[0].uri.toString().replace(HTTP_TAG, HTTPS_TAG)
             if (mHuaweiNativeAd.icon != null) {
                 val icon = mHuaweiNativeAd.icon
-                iconImageUrl = icon.uri.toString().replace(HTTP_TAG,HTTPS_TAG)
+                iconImageUrl = icon.uri.toString().replace(HTTP_TAG, HTTPS_TAG)
             }
             callToAction = mHuaweiNativeAd.callToAction
             title = mHuaweiNativeAd.title

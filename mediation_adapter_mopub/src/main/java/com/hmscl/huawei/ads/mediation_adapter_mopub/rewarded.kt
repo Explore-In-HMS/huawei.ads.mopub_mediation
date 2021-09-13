@@ -45,9 +45,6 @@ class rewarded : BaseAd() {
     private val KEY_EXTRA_APPLICATION_ID = HuaweiAdsCustomEventDataKeys.KEY_EXTRA_APPLICATION_ID
     private val KEY_EXTRA_AD_UNIT_ID = HuaweiAdsCustomEventDataKeys.AD_UNIT_ID_KEY
     private val KEY_CONTENT_URL = HuaweiAdsCustomEventDataKeys.CONTENT_URL_KEY
-    private val TAG_FOR_CHILD_DIRECTED_KEY = HuaweiAdsCustomEventDataKeys.TAG_FOR_CHILD_PROTECTION_KEY
-    private val TAG_FOR_UNDER_AGE_OF_CONSENT_KEY =
-        HuaweiAdsCustomEventDataKeys.TAG_FOR_UNDER_AGE_OF_PROMISE_KEY
     private val ADAPTER_NAME: String = rewarded::class.java.getSimpleName()
     private var sIsInitialized = AtomicBoolean(false)
     private var mAdUnitId: String? = null
@@ -134,10 +131,13 @@ class rewarded : BaseAd() {
             builder.setTargetingContentUrl(contentUrl)
         }
 
+        /**
+         * Prepare Child-protection keys
+         */
         val requestConfigurationBuilder = prepareBuilderViaExtras(extras)
-
         val requestConfiguration = requestConfigurationBuilder.build()
         HwAds.setRequestOptions(requestConfiguration)
+
         val adRequest = builder.build()
         mRewardedAd!!.loadAd(adRequest, mRewardedAdLoadCallback)
         MoPubLog.log(adNetworkId, AdapterLogEvent.LOAD_ATTEMPTED, ADAPTER_NAME)

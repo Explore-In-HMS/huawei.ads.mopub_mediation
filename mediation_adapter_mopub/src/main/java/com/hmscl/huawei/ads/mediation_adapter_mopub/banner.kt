@@ -89,10 +89,13 @@ class banner : BaseAd() {
             builder.setTargetingContentUrl(contentUrl)
         }
 
+        /**
+         * Prepare Child-protection keys
+         */
         val requestConfigurationBuilder = prepareBuilderViaExtras(extras)
-
         val requestConfiguration = requestConfigurationBuilder.build()
         HwAds.setRequestOptions(requestConfiguration)
+
         val adRequest = builder.build()
         mHuaweiAdView.loadAd(adRequest)
         MoPubLog.log(adNetworkId, AdapterLogEvent.LOAD_ATTEMPTED, ADAPTER_NAME)

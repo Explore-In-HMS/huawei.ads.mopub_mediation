@@ -55,9 +55,7 @@ class interstitial : BaseAd() {
                     MoPubErrorCode.NETWORK_NO_FILL.intCode,
                     MoPubErrorCode.NETWORK_NO_FILL
             )
-            if (mLoadListener != null) {
-                mLoadListener.onAdLoadFailed(MoPubErrorCode.NETWORK_NO_FILL)
-            }
+            mLoadListener?.onAdLoadFailed(MoPubErrorCode.NETWORK_NO_FILL)
             return
         }
         mHuaweiInterstitialAd = InterstitialAd(context)
@@ -93,9 +91,7 @@ class interstitial : BaseAd() {
                     MoPubErrorCode.NETWORK_NO_FILL.intCode,
                     MoPubErrorCode.NETWORK_NO_FILL
             )
-            if (mInteractionListener != null) {
-                mInteractionListener.onAdFailed(MoPubErrorCode.NETWORK_NO_FILL)
-            }
+            mInteractionListener?.onAdFailed(MoPubErrorCode.NETWORK_NO_FILL)
         }
     }
 
@@ -126,9 +122,7 @@ class interstitial : BaseAd() {
 
     private inner class InterstitialAdListener : AdListener() {
         override fun onAdClosed() {
-            if (mInteractionListener != null) {
-                mInteractionListener.onAdDismissed()
-            }
+            mInteractionListener?.onAdDismissed()
         }
 
         override fun onAdFailed(loadAdError: Int) {
@@ -139,29 +133,23 @@ class interstitial : BaseAd() {
                     "interstitial with message: " + getMoPubErrorCode(loadAdError)!!.name + ". Caused by: " +
                     loadAdError)
 
-            if (mLoadListener != null) {
-                mLoadListener.onAdLoadFailed(getMoPubErrorCode(loadAdError)!!)
-            }
+            mLoadListener?.onAdLoadFailed(getMoPubErrorCode(loadAdError)!!)
         }
 
         override fun onAdLeave() {
-            if (mInteractionListener != null) {
-                mInteractionListener.onAdClicked()
-            }
+            mInteractionListener?.onAdClicked()
         }
 
         override fun onAdLoaded() {
             MoPubLog.log(adNetworkId, AdapterLogEvent.LOAD_SUCCESS, ADAPTER_NAME)
-            if (mLoadListener != null) {
-                mLoadListener.onAdLoaded()
-            }
+            mLoadListener?.onAdLoaded()
         }
 
         override fun onAdOpened() {
             MoPubLog.log(adNetworkId, AdapterLogEvent.SHOW_SUCCESS, ADAPTER_NAME)
             if (mInteractionListener != null) {
-                mInteractionListener.onAdShown()
-                mInteractionListener.onAdImpression()
+                mInteractionListener!!.onAdShown()
+                mInteractionListener!!.onAdImpression()
             }
         }
 

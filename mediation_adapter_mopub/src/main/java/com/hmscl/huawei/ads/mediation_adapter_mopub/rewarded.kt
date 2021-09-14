@@ -24,8 +24,6 @@ import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDa
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.prepareBuilderViaExtras
 import com.huawei.hms.ads.AdParam
 import com.huawei.hms.ads.HwAds
-import com.huawei.hms.ads.TagForChild
-import com.huawei.hms.ads.UnderAge
 import com.huawei.hms.ads.reward.Reward
 import com.huawei.hms.ads.reward.RewardAd
 import com.huawei.hms.ads.reward.RewardAdLoadListener
@@ -84,11 +82,9 @@ class rewarded : BaseAd() {
             if (TextUtils.isEmpty(mAdUnitId)) {
                 MoPubLog.log(adNetworkId, AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
                         MoPubErrorCode.NETWORK_NO_FILL.intCode,
-                    MoPubErrorCode.NETWORK_NO_FILL
+                        MoPubErrorCode.NETWORK_NO_FILL
                 )
-                if (mLoadListener != null) {
-                    mLoadListener.onAdLoadFailed(MoPubErrorCode.NETWORK_NO_FILL)
-                }
+                mLoadListener?.onAdLoadFailed(MoPubErrorCode.NETWORK_NO_FILL)
                 return false
             }
             mHuaweiAdsAdapterConfiguration.setCachedInitializationParameters(launcherActivity,
@@ -105,19 +101,15 @@ class rewarded : BaseAd() {
         if (TextUtils.isEmpty(mAdUnitId)) {
             MoPubLog.log(adNetworkId, AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
                     MoPubErrorCode.ADAPTER_CONFIGURATION_ERROR.intCode,
-                MoPubErrorCode.ADAPTER_CONFIGURATION_ERROR
+                    MoPubErrorCode.ADAPTER_CONFIGURATION_ERROR
             )
-            if (mLoadListener != null) {
-                mLoadListener.onAdLoadFailed(MoPubErrorCode.ADAPTER_CONFIGURATION_ERROR)
-            }
+            mLoadListener?.onAdLoadFailed(MoPubErrorCode.ADAPTER_CONFIGURATION_ERROR)
             return
         }
         if (context !is Activity) {
             MoPubLog.log(adNetworkId, AdapterLogEvent.CUSTOM, ADAPTER_NAME, "Context passed to load " +
                     "was not an Activity. This is a bug in MoPub.")
-            if (mLoadListener != null) {
-                mLoadListener.onAdLoadFailed(MoPubErrorCode.ADAPTER_CONFIGURATION_ERROR)
-            }
+            mLoadListener?.onAdLoadFailed(MoPubErrorCode.ADAPTER_CONFIGURATION_ERROR)
             return
         }
         mWeakActivity = WeakReference(context)
@@ -154,11 +146,9 @@ class rewarded : BaseAd() {
         } else {
             MoPubLog.log(adNetworkId, AdapterLogEvent.SHOW_FAILED, ADAPTER_NAME,
                     MoPubErrorCode.NETWORK_NO_FILL.intCode,
-                MoPubErrorCode.NETWORK_NO_FILL
+                    MoPubErrorCode.NETWORK_NO_FILL
             )
-            if (mInteractionListener != null) {
-                mInteractionListener.onAdFailed(getMoPubErrorCode(AdParam.ErrorCode.NO_AD)!!)
-            }
+            mInteractionListener?.onAdFailed(getMoPubErrorCode(AdParam.ErrorCode.NO_AD)!!)
         }
     }
 
@@ -168,17 +158,13 @@ class rewarded : BaseAd() {
             MoPubLog.log(adNetworkId, AdapterLogEvent.CUSTOM, ADAPTER_NAME, "Failed to load Huawei " +
                     "rewarded video with message: " + loadAdError + ". Caused by: " +
                     loadAdError)
-            if (mLoadListener != null) {
-                mLoadListener.onAdLoadFailed(getMoPubErrorCode(loadAdError)!!)
-            }
+            mLoadListener?.onAdLoadFailed(getMoPubErrorCode(loadAdError)!!)
         }
 
         override fun onRewardedLoaded() {
             mIsLoaded = true
             MoPubLog.log(adNetworkId, AdapterLogEvent.LOAD_SUCCESS, ADAPTER_NAME)
-            if (mLoadListener != null) {
-                mLoadListener.onAdLoaded()
-            }
+            mLoadListener?.onAdLoaded()
         }
     }
 
@@ -186,25 +172,21 @@ class rewarded : BaseAd() {
         override fun onRewardAdOpened() {
             MoPubLog.log(adNetworkId, AdapterLogEvent.SHOW_SUCCESS, ADAPTER_NAME)
             if (mInteractionListener != null) {
-                mInteractionListener.onAdShown()
-                mInteractionListener.onAdImpression()
+                mInteractionListener!!.onAdShown()
+                mInteractionListener!!.onAdImpression()
             }
         }
 
         override fun onRewardAdClosed() {
             MoPubLog.log(adNetworkId, AdapterLogEvent.DID_DISAPPEAR, ADAPTER_NAME)
-            if (mInteractionListener != null) {
-                mInteractionListener.onAdDismissed()
-            }
+            mInteractionListener?.onAdDismissed()
         }
 
         override fun onRewarded(rewardItem: Reward) {
             MoPubLog.log(adNetworkId, AdapterLogEvent.SHOULD_REWARD, ADAPTER_NAME,
-                    rewardItem.amount, rewardItem.name )
-            if (mInteractionListener != null) {
-                mInteractionListener.onAdComplete(MoPubReward.success(rewardItem.name,
-                        rewardItem.amount))
-            }
+                    rewardItem.amount, rewardItem.name)
+            mInteractionListener?.onAdComplete(MoPubReward.success(rewardItem.name,
+                    rewardItem.amount))
         }
 
         override fun onRewardAdFailedToShow(loadAdError: Int) {
@@ -215,9 +197,7 @@ class rewarded : BaseAd() {
                     "rewarded video with message: " + getMoPubErrorCode(loadAdError)!!.name + ". Caused by: " +
                     loadAdError)
 
-            if (mLoadListener != null) {
-                mLoadListener.onAdLoadFailed(getMoPubErrorCode(loadAdError)!!)
-            }
+            mLoadListener?.onAdLoadFailed(getMoPubErrorCode(loadAdError)!!)
         }
     }
 

@@ -74,9 +74,7 @@ class banner : BaseAd() {
                     MoPubErrorCode.NETWORK_NO_FILL
             )
 
-            if (mLoadListener != null) {
-                mLoadListener.onAdLoadFailed(MoPubErrorCode.NETWORK_NO_FILL)
-            }
+            mLoadListener?.onAdLoadFailed(MoPubErrorCode.NETWORK_NO_FILL)
             return
         }
 
@@ -84,7 +82,6 @@ class banner : BaseAd() {
         builder.setRequestOrigin("MoPub")
 
         val contentUrl = extras[CONTENT_URL_KEY]
-
         if (!TextUtils.isEmpty(contentUrl)) {
             builder.setTargetingContentUrl(contentUrl)
         }
@@ -122,7 +119,7 @@ class banner : BaseAd() {
     override fun checkAndInitializeSdk(
             launcherActivity: Activity,
             adData: AdData
-    ): kotlin.Boolean {
+    ): Boolean {
         return false
     }
 
@@ -132,16 +129,18 @@ class banner : BaseAd() {
         }
 
         override fun onAdFailed(loadAdError: Int) {
-            MoPubLog.log(adNetworkId, AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
+            MoPubLog.log(
+                    adNetworkId, AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
                     getMoPubErrorCode(loadAdError)!!.intCode,
-                    getMoPubErrorCode(loadAdError))
-            MoPubLog.log(adNetworkId, AdapterLogEvent.CUSTOM, ADAPTER_NAME, "Failed to load Huawei " +
+                    getMoPubErrorCode(loadAdError)
+            )
+            MoPubLog.log(
+                    adNetworkId, AdapterLogEvent.CUSTOM, ADAPTER_NAME, "Failed to load Huawei " +
                     "banners with message: " + loadAdError + ". Caused by: " +
-                    loadAdError)
+                    loadAdError
+            )
 
-            if (mLoadListener != null) {
-                mLoadListener.onAdLoadFailed(getMoPubErrorCode(loadAdError)!!)
-            }
+            mLoadListener?.onAdLoadFailed(getMoPubErrorCode(loadAdError)!!)
         }
 
         override fun onAdLeave() {
@@ -151,9 +150,7 @@ class banner : BaseAd() {
         override fun onAdOpened() {
             MoPubLog.log(adNetworkId, AdapterLogEvent.CLICKED, ADAPTER_NAME)
 
-            if (mInteractionListener != null) {
-                mInteractionListener.onAdClicked()
-            }
+            mInteractionListener?.onAdClicked()
         }
 
         override fun onAdLoaded() {
@@ -161,31 +158,28 @@ class banner : BaseAd() {
             val receivedHeight: Int = mHuaweiAdView.bannerAdSize.height
 
             if (receivedWidth > adWidth!! || receivedHeight > adHeight!!) {
-                MoPubLog.log(adNetworkId, AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
+                MoPubLog.log(
+                        adNetworkId, AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
                         MoPubErrorCode.NETWORK_NO_FILL.intCode, MoPubErrorCode.NETWORK_NO_FILL
                 )
-                MoPubLog.log(adNetworkId, AdapterLogEvent.CUSTOM, ADAPTER_NAME, "Huawei served an ad but" +
+                MoPubLog.log(
+                        adNetworkId, AdapterLogEvent.CUSTOM, ADAPTER_NAME, "Huawei served an ad but" +
                         " it was invalidated because its size of " + receivedWidth + " x " + receivedHeight +
-                        " exceeds the publisher-specified size of " + adWidth + " x " + adHeight)
-                if (mLoadListener != null) {
-                    mLoadListener.onAdLoadFailed(getMoPubErrorCode(MoPubErrorCode.NETWORK_NO_FILL.intCode)!!)
-                }
+                        " exceeds the publisher-specified size of " + adWidth + " x " + adHeight
+                )
+                mLoadListener?.onAdLoadFailed(getMoPubErrorCode(MoPubErrorCode.NETWORK_NO_FILL.intCode)!!)
             } else {
                 MoPubLog.log(adNetworkId, AdapterLogEvent.LOAD_SUCCESS, ADAPTER_NAME)
                 MoPubLog.log(adNetworkId, AdapterLogEvent.SHOW_ATTEMPTED, ADAPTER_NAME)
                 MoPubLog.log(adNetworkId, AdapterLogEvent.SHOW_SUCCESS, ADAPTER_NAME)
-                if (mLoadListener != null) {
-                    mLoadListener.onAdLoaded()
-                }
+                mLoadListener?.onAdLoaded()
             }
         }
 
         override fun onAdClicked() {
             MoPubLog.log(adNetworkId, AdapterLogEvent.CLICKED, ADAPTER_NAME)
 
-            if (mInteractionListener != null) {
-                mInteractionListener.onAdClicked()
-            }
+            mInteractionListener?.onAdClicked()
         }
 
         override fun onAdImpression() {

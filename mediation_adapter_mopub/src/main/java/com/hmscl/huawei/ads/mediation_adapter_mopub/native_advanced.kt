@@ -19,13 +19,12 @@ package com.hmscl.huawei.ads.mediation_adapter_mopub
 import android.content.Context
 import android.text.TextUtils
 import android.view.View
-import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsAdapterConfiguration
+import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.*
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys.Companion.AD_UNIT_ID_KEY
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys.Companion.CONTENT_URL_KEY
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys.Companion.KEY_EXPERIMENTAL_EXTRA_SWAP_MARGINS
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys.Companion.KEY_EXTRA_AD_CHOICES_PLACEMENT
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys.Companion.KEY_EXTRA_ORIENTATION_PREFERENCE
-import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.prepareBuilderViaExtras
 import com.huawei.hms.ads.*
 import com.huawei.hms.ads.nativead.NativeAd
 import com.huawei.hms.ads.nativead.NativeAdConfiguration
@@ -96,16 +95,38 @@ class native_advanced : CustomEventNative() {
             val optionsBuilder = NativeAdConfiguration.Builder()
             optionsBuilder.setRequestMultiImages(false)
 
-            if (localExtras.containsKey(KEY_EXTRA_ORIENTATION_PREFERENCE) && isValidOrientationExtra(localExtras[KEY_EXTRA_ORIENTATION_PREFERENCE])) {
-                optionsBuilder.setMediaDirection(localExtras[KEY_EXTRA_ORIENTATION_PREFERENCE] as Int)
-            } else if (serverExtras.containsKey(KEY_EXTRA_ORIENTATION_PREFERENCE) && isValidOrientationExtra(serverExtras[KEY_EXTRA_ORIENTATION_PREFERENCE])) {
-                optionsBuilder.setMediaDirection(serverExtras[KEY_EXTRA_ORIENTATION_PREFERENCE] as Int)
+            /**
+             *
+             */
+            if (localExtras.containsKey(KEY_EXTRA_ORIENTATION_PREFERENCE) && isValidOrientationExtra(
+                            localExtras[KEY_EXTRA_ORIENTATION_PREFERENCE]
+                    )
+            ) {
+                optionsBuilder.setMediaDirection(
+                        localExtras[KEY_EXTRA_ORIENTATION_PREFERENCE].toString().toInt()
+                )
+            } else if (serverExtras.containsKey(KEY_EXTRA_ORIENTATION_PREFERENCE) && isValidOrientationExtra(
+                            serverExtras[KEY_EXTRA_ORIENTATION_PREFERENCE]
+                    )
+            ) {
+                optionsBuilder.setMediaDirection(serverExtras[KEY_EXTRA_ORIENTATION_PREFERENCE]!!.toInt())
             }
 
-            if (localExtras.containsKey(KEY_EXTRA_AD_CHOICES_PLACEMENT) && isValidAdChoicesPlacementExtra(localExtras[KEY_EXTRA_AD_CHOICES_PLACEMENT])) {
-                optionsBuilder.setChoicesPosition(localExtras[KEY_EXTRA_AD_CHOICES_PLACEMENT] as Int)
-            } else if (serverExtras.containsKey(KEY_EXTRA_AD_CHOICES_PLACEMENT) && isValidAdChoicesPlacementExtra(serverExtras[KEY_EXTRA_AD_CHOICES_PLACEMENT])) {
-                optionsBuilder.setChoicesPosition(serverExtras[KEY_EXTRA_AD_CHOICES_PLACEMENT] as Int)
+            /**
+             *
+             */
+            if (localExtras.containsKey(KEY_EXTRA_AD_CHOICES_PLACEMENT) && isValidAdChoicesPlacementExtra(
+                            localExtras[KEY_EXTRA_AD_CHOICES_PLACEMENT]
+                    )
+            ) {
+                optionsBuilder.setChoicesPosition(
+                        localExtras[KEY_EXTRA_AD_CHOICES_PLACEMENT].toString().toInt()
+                )
+            } else if (serverExtras.containsKey(KEY_EXTRA_AD_CHOICES_PLACEMENT) && isValidAdChoicesPlacementExtra(
+                            serverExtras[KEY_EXTRA_AD_CHOICES_PLACEMENT]
+                    )
+            ) {
+                optionsBuilder.setChoicesPosition(serverExtras[KEY_EXTRA_AD_CHOICES_PLACEMENT]!!.toInt())
             }
 
             val adOptions = optionsBuilder.build()
@@ -203,24 +224,6 @@ class native_advanced : CustomEventNative() {
             val adRequest = requestBuilder.build()
             adLoader.loadAd(adRequest)
             MoPubLog.log(getAdNetworkId(), AdapterLogEvent.LOAD_ATTEMPTED, ADAPTER_NAME)
-        }
-
-        private fun isValidOrientationExtra(extra: Any?): Boolean {
-            if (extra !is Int) {
-                return false
-            }
-            return extra == NativeAdConfiguration.Direction.ANY || extra == NativeAdConfiguration.Direction.LANDSCAPE || extra == NativeAdConfiguration.Direction.PORTRAIT
-        }
-
-        private fun isValidAdChoicesPlacementExtra(extra: Any?): Boolean {
-            if (extra !is Int) {
-                return false
-            }
-            return extra == NativeAdConfiguration.ChoicesPosition.TOP_LEFT || extra == NativeAdConfiguration.ChoicesPosition.TOP_RIGHT || extra == NativeAdConfiguration.ChoicesPosition.BOTTOM_LEFT || extra == NativeAdConfiguration.ChoicesPosition.BOTTOM_RIGHT
-        }
-
-        private fun isValidHuaweiNativeAd(huaweiNativeAd: NativeAd): Boolean {
-            return huaweiNativeAd.title != null && huaweiNativeAd.images != null && huaweiNativeAd.images.size > 0 && huaweiNativeAd.images[0] != null && huaweiNativeAd.callToAction != null
         }
 
         override fun prepare(view: View) {

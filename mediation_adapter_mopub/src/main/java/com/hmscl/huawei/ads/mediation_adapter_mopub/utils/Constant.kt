@@ -16,13 +16,18 @@
 
 package com.hmscl.huawei.ads.mediation_adapter_mopub.utils
 
-class HuaweiContentClassificationKey {
-    companion object {
+object Constant {
+    object ContentClassification {
         const val KEY_W = "w"
         const val KEY_J = "j"
         const val KEY_PI = "pi"
         const val KEY_A = "a"
         const val KEY_0 = "0"
         const val KEY_1 = "1"
+    }
+
+    object PersonalAd {
+        const val KEY_EXPLICIT_YES = "explicit_yes"
+        const val KEY_EXPLICIT_NO = "explicit_no"
     }
 }

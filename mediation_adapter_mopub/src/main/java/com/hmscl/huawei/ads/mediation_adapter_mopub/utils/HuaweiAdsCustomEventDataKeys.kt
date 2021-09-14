@@ -23,6 +23,7 @@ class HuaweiAdsCustomEventDataKeys {
         const val TAG_FOR_CHILD_PROTECTION_KEY = "tagForChildProtection"
         const val TAG_FOR_UNDER_AGE_OF_PROMISE_KEY = "tagUnderAgeOfPromise"
         const val TAG_FOR_AD_CONTENT_CLASSIFICATION_KEY = "tagAdContentClassification"
+        const val TAG_CONSENT_STRING = "tagConsentString"
         const val CONTENT_URL_KEY = "contentUrl"
         const val KEY_EXTRA_ORIENTATION_PREFERENCE = "orientation_preference"
         const val KEY_EXTRA_AD_CHOICES_PLACEMENT = "ad_choices_placement"

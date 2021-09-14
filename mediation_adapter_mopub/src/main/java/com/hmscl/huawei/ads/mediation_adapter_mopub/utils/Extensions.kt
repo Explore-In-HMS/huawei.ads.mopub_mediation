@@ -16,9 +16,19 @@
 
 package com.hmscl.huawei.ads.mediation_adapter_mopub.utils
 
+import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.Constant.ContentClassification.KEY_A
+import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.Constant.ContentClassification.KEY_J
+import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.Constant.ContentClassification.KEY_PI
+import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.Constant.ContentClassification.KEY_W
+import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.Constant.PersonalAd.KEY_EXPLICIT_NO
+import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.Constant.PersonalAd.KEY_EXPLICIT_YES
+import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys.Companion.TAG_CONSENT_STRING
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys.Companion.TAG_FOR_CHILD_PROTECTION_KEY
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys.Companion.TAG_FOR_UNDER_AGE_OF_PROMISE_KEY
 import com.huawei.hms.ads.*
+import com.huawei.hms.ads.nativead.NativeAd
+import com.huawei.hms.ads.nativead.NativeAdConfiguration
+import com.mopub.common.MoPub
 
 fun prepareBuilderViaExtras(extras: Map<String, String>): RequestOptions.Builder {
     val requestConfigurationBuilder = HwAds.getRequestOptions().toBuilder()
@@ -32,14 +42,23 @@ fun prepareBuilderViaExtras(extras: Map<String, String>): RequestOptions.Builder
      * j: content suitable for junior and older audiences.
      * a: content suitable only for adults.
      */
-    val adContentClassification = extras[HuaweiAdsCustomEventDataKeys.TAG_FOR_AD_CONTENT_CLASSIFICATION_KEY]
+    val adContentClassification =
+            extras[HuaweiAdsCustomEventDataKeys.TAG_FOR_AD_CONTENT_CLASSIFICATION_KEY]
     if (adContentClassification != null) {
         try {
             when (adContentClassification) {
-                HuaweiContentClassificationKey.KEY_W -> requestConfigurationBuilder.setAdContentClassification(ContentClassification.AD_CONTENT_CLASSIFICATION_W)
-                HuaweiContentClassificationKey.KEY_J -> requestConfigurationBuilder.setAdContentClassification(ContentClassification.AD_CONTENT_CLASSIFICATION_J)
-                HuaweiContentClassificationKey.KEY_PI -> requestConfigurationBuilder.setAdContentClassification(ContentClassification.AD_CONTENT_CLASSIFICATION_PI)
-                HuaweiContentClassificationKey.KEY_A -> requestConfigurationBuilder.setAdContentClassification(ContentClassification.AD_CONTENT_CLASSIFICATION_A)
+                KEY_W -> requestConfigurationBuilder.setAdContentClassification(
+                        ContentClassification.AD_CONTENT_CLASSIFICATION_W
+                )
+                KEY_J -> requestConfigurationBuilder.setAdContentClassification(
+                        ContentClassification.AD_CONTENT_CLASSIFICATION_J
+                )
+                KEY_PI -> requestConfigurationBuilder.setAdContentClassification(
+                        ContentClassification.AD_CONTENT_CLASSIFICATION_PI
+                )
+                KEY_A -> requestConfigurationBuilder.setAdContentClassification(
+                        ContentClassification.AD_CONTENT_CLASSIFICATION_A
+                )
                 else -> requestConfigurationBuilder.setAdContentClassification(ContentClassification.AD_CONTENT_CLASSIFICATION_UNKOWN)
             }
         } catch (e: Exception) {
@@ -91,5 +110,69 @@ fun prepareBuilderViaExtras(extras: Map<String, String>): RequestOptions.Builder
         requestConfigurationBuilder.setTagForUnderAgeOfPromise(UnderAge.PROMISE_UNSPECIFIED)
     }
 
+    /**
+     * Sets whether to request only non-personalized ads.
+     * ALLOW_ALL: personalized Requests both personalized and non-personalized ads (default).
+     * ALLOW_NON_PERSONALIZED: Requests only non-personalized ads.
+     *
+     * https://developer.huawei.com/consumer/en/doc/development/HMSCore-References/nonpersonalizedad-0000001050064874#section5558312151218
+     */
+    try {
+        val mPersonalInfoManager = MoPub.getPersonalInformationManager()
+        when (mPersonalInfoManager?.personalInfoConsentStatus?.value) {
+            KEY_EXPLICIT_YES -> {
+                requestConfigurationBuilder.setNonPersonalizedAd(NonPersonalizedAd.ALLOW_ALL)
+            }
+            KEY_EXPLICIT_NO -> {
+                requestConfigurationBuilder.setNonPersonalizedAd(NonPersonalizedAd.ALLOW_NON_PERSONALIZED)
+            }
+            else -> {
+                requestConfigurationBuilder.setNonPersonalizedAd(NonPersonalizedAd.ALLOW_ALL)
+            }
+
+        }
+    } catch (e: Exception) {
+        requestConfigurationBuilder.setNonPersonalizedAd(NonPersonalizedAd.ALLOW_ALL)
+    }
+
+    val consent = extras[TAG_CONSENT_STRING]
+    if (consent != null) {
+        try {
+            requestConfigurationBuilder.setConsent(consent)
+        } catch (e: Exception) {
+            //No operation.
+        }
+    }
     return requestConfigurationBuilder
+}
+
+/**
+ *
+ */
+fun isValidOrientationExtra(extra: Any?): Boolean {
+    return try {
+        val value = extra.toString().toInt()
+        value == NativeAdConfiguration.Direction.ANY || value == NativeAdConfiguration.Direction.LANDSCAPE || value == NativeAdConfiguration.Direction.PORTRAIT
+    } catch (e: Exception) {
+        false
+    }
+}
+
+/**
+ *
+ */
+fun isValidAdChoicesPlacementExtra(extra: Any?): Boolean {
+    return try {
+        val value = extra.toString().toInt()
+        value == NativeAdConfiguration.ChoicesPosition.TOP_LEFT || value == NativeAdConfiguration.ChoicesPosition.TOP_RIGHT || value == NativeAdConfiguration.ChoicesPosition.BOTTOM_LEFT || value == NativeAdConfiguration.ChoicesPosition.BOTTOM_RIGHT
+    } catch (e: Exception) {
+        false
+    }
+}
+
+/**
+ *
+ */
+fun isValidHuaweiNativeAd(huaweiNativeAd: NativeAd): Boolean {
+    return huaweiNativeAd.title != null && huaweiNativeAd.images != null && huaweiNativeAd.images.size > 0 && huaweiNativeAd.images[0] != null && huaweiNativeAd.callToAction != null
 }

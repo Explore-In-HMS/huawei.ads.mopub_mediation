@@ -37,6 +37,7 @@ class HuaweiAdsCustomEventDataKeys {
             "tagForChildProtection": "false",
             "tagUnderAgeOfPromise": "false",
             "tagAdContentClassification": "w/pi/j/a",
+            "tagConsentString": "...",
             "contentUrl" : "abc"
         }
 
@@ -47,6 +48,7 @@ class HuaweiAdsCustomEventDataKeys {
             "tagForChildProtection": "false",
             "tagUnderAgeOfPromise": "false",
             "tagAdContentClassification": "w/pi/j/a",
+            "tagConsentString": "...",
             "contentUrl" : "abc",
             "orientation_preference": "aaa",
             "ad_choices_placement": "bbb",

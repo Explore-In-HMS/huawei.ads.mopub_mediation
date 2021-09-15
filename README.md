@@ -1,5 +1,6 @@
+#Huawei-Mopub Mediation Github Documentation
 
-  <h1 align="center">Huawei-Mopub Mediation Github Documentation</h3>
+![Latest Version](https://img.shields.io/badge/latestVersion-1.1.1-yellow) ![Kotlin](https://img.shields.io/badge/language-kotlin-blue)
 
 This is a project to demonstrate how to use MoPub’s mediation feature with Huawei Ads Kit.
 
@@ -36,16 +37,58 @@ This is a project to demonstrate how to use MoPub’s mediation feature with Hua
 | Native Ad (Advanced) | com.hmscl.huawei.ads.mediation_adapter_mopub.native_advanced    |
 
 ## Custom Event Parameters
+
+### Banner, Interstitial, Rewarded
 ```
 {
     "adUnitID": "222",  <-- Required
     "appid":"111",
-    "tagForChildDirectedTreatment": "false", 
-    "TAG_FOR_UNDER_AGE_OF_CONSENT_KEY": "false", 
+    "tagForChildProtection": "false",
+    "tagUnderAgeOfPromise": "false",
+    "tagAdContentClassification": "false",
+    "tagConsentString": "false",
     "contentUrl" : "abc"
 }
 ```
 Other values are optional
+
+### Native
+```
+{
+    "adUnitID": "222",  <-- Required
+    "appid":"111",
+    "tagForChildProtection": "false",
+    "tagUnderAgeOfPromise": "false",
+    "tagAdContentClassification": "false",
+    "tagConsentString": "false",
+    "contentUrl" : "abc"
+    "orientation_preference" : ""
+    "ad_choices_placement" : ""
+    "swap_margins" : ""
+}
+```
+| Key | Description |
+| --- | :---: |
+| adUnitID  | xxx |
+| appid | xxx |
+| tagForChildProtection | Sets the tag for child-directed content, to comply with the Children's Online Privacy Protection Act (COPPA).
+                               * The options are as follows:
+                               * protectionTrue: You want your ad content to be COPPA-compliant (interest-based ads and remarketing ads will be disabled for the ad request).
+                               * protectionFalse: You do not want your ad content to be COPPA-compliant.
+                               * protectionUnspecified: You have not specified whether your ad content needs to be COPPA-compliant. |
+| tagUnderAgeOfPromise |  |
+| tagAdContentClassification |  |
+| tagConsentString |  |
+| contentUrl |  |
+| orientation_preference (Native specific) |  |
+| ad_choices_placement (Native specific) |  |
+| swap_margins (Native specific) |  |
+
+
+
+
+
+
 
 # Integrate the Huawei Mediation SDK
 

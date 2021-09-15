@@ -86,6 +86,7 @@ class native_basic : CustomEventNative() {
                 serverExtras: Map<String, String>
         ) {
             val builder = NativeAdLoader.Builder(context, adUnitId)
+            // TODO: 9/14/2021  
             if (localExtras.containsKey(KEY_EXPERIMENTAL_EXTRA_SWAP_MARGINS)) {
                 val swapMarginExtra = localExtras[KEY_EXPERIMENTAL_EXTRA_SWAP_MARGINS]
                 if (swapMarginExtra is Boolean) {
@@ -96,7 +97,8 @@ class native_basic : CustomEventNative() {
             optionsBuilder.setRequestMultiImages(false)
 
             /**
-             *
+             * Sets the orientation of an ad image
+             * https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-References-V1/nativead-cfg-builder-0000001050298606-V1
              */
             if (localExtras.containsKey(KEY_EXTRA_ORIENTATION_PREFERENCE) && isValidOrientationExtra(
                             localExtras[KEY_EXTRA_ORIENTATION_PREFERENCE]
@@ -113,7 +115,8 @@ class native_basic : CustomEventNative() {
             }
 
             /**
-             *
+             * Sets the AdChoices icon position
+             * https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-References-V1/nativead-cfg-builder-0000001050298606-V1
              */
             if (localExtras.containsKey(KEY_EXTRA_AD_CHOICES_PLACEMENT) && isValidAdChoicesPlacementExtra(
                             localExtras[KEY_EXTRA_AD_CHOICES_PLACEMENT]

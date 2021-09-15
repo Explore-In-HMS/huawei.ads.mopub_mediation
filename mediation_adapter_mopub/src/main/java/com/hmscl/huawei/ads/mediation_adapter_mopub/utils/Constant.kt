@@ -22,8 +22,6 @@ object Constant {
         const val KEY_J = "j"
         const val KEY_PI = "pi"
         const val KEY_A = "a"
-        const val KEY_0 = "0"
-        const val KEY_1 = "1"
     }
 
     object PersonalAd {

@@ -21,6 +21,8 @@ import android.content.Context
 import android.text.TextUtils
 import android.view.View
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys
+import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys.Companion.AD_UNIT_ID_KEY
+import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys.Companion.CONTENT_URL_KEY
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.prepareBuilderViaExtras
 import com.huawei.hms.ads.AdListener
 import com.huawei.hms.ads.AdParam
@@ -37,8 +39,6 @@ import com.mopub.mobileads.BaseAd
 import com.mopub.mobileads.MoPubErrorCode
 
 class banner : BaseAd() {
-    val AD_UNIT_ID_KEY = HuaweiAdsCustomEventDataKeys.AD_UNIT_ID_KEY
-    val CONTENT_URL_KEY = HuaweiAdsCustomEventDataKeys.CONTENT_URL_KEY
     val ADAPTER_NAME = banner::class.java.simpleName
     private lateinit var mHuaweiAdView: BannerView
     private var mAdUnitId: String? = null

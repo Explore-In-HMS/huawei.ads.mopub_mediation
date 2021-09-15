@@ -21,6 +21,9 @@ import android.content.Context
 import android.text.TextUtils
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsAdapterConfiguration
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys
+import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys.Companion.AD_UNIT_ID_KEY
+import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys.Companion.CONTENT_URL_KEY
+import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys.Companion.KEY_EXTRA_APPLICATION_ID
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.prepareBuilderViaExtras
 import com.huawei.hms.ads.AdParam
 import com.huawei.hms.ads.HwAds
@@ -40,9 +43,6 @@ import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicBoolean
 
 class rewarded : BaseAd() {
-    private val KEY_EXTRA_APPLICATION_ID = HuaweiAdsCustomEventDataKeys.KEY_EXTRA_APPLICATION_ID
-    private val KEY_EXTRA_AD_UNIT_ID = HuaweiAdsCustomEventDataKeys.AD_UNIT_ID_KEY
-    private val KEY_CONTENT_URL = HuaweiAdsCustomEventDataKeys.CONTENT_URL_KEY
     private val ADAPTER_NAME: String = rewarded::class.java.getSimpleName()
     private var sIsInitialized = AtomicBoolean(false)
     private var mAdUnitId: String? = null
@@ -78,7 +78,7 @@ class rewarded : BaseAd() {
             } else {
                 HwAds.init(launcherActivity, extras[KEY_EXTRA_APPLICATION_ID])
             }
-            mAdUnitId = extras[KEY_EXTRA_AD_UNIT_ID]
+            mAdUnitId = extras[AD_UNIT_ID_KEY]
             if (TextUtils.isEmpty(mAdUnitId)) {
                 MoPubLog.log(adNetworkId, AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
                         MoPubErrorCode.NETWORK_NO_FILL.intCode,
@@ -97,7 +97,7 @@ class rewarded : BaseAd() {
     override fun load(context: Context, adData: AdData) {
         setAutomaticImpressionAndClickTracking(false)
         val extras = adData.extras
-        mAdUnitId = extras[KEY_EXTRA_AD_UNIT_ID]!!
+        mAdUnitId = extras[AD_UNIT_ID_KEY]!!
         if (TextUtils.isEmpty(mAdUnitId)) {
             MoPubLog.log(adNetworkId, AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
                     MoPubErrorCode.ADAPTER_CONFIGURATION_ERROR.intCode,
@@ -117,8 +117,7 @@ class rewarded : BaseAd() {
         val builder = AdParam.Builder()
         builder.setRequestOrigin("MoPub")
 
-        val contentUrl = extras[KEY_CONTENT_URL]
-
+        val contentUrl = extras[CONTENT_URL_KEY]
         if (!TextUtils.isEmpty(contentUrl)) {
             builder.setTargetingContentUrl(contentUrl)
         }

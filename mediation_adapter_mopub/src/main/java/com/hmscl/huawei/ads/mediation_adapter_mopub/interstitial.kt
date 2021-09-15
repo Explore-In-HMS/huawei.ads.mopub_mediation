@@ -20,7 +20,8 @@ import android.app.Activity
 import android.content.Context
 import android.text.TextUtils
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsAdapterConfiguration
-import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys
+import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys.Companion.AD_UNIT_ID_KEY
+import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys.Companion.CONTENT_URL_KEY
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.prepareBuilderViaExtras
 import com.huawei.hms.ads.AdListener
 import com.huawei.hms.ads.AdParam
@@ -35,8 +36,6 @@ import com.mopub.mobileads.BaseAd
 import com.mopub.mobileads.MoPubErrorCode
 
 class interstitial : BaseAd() {
-    val AD_UNIT_ID_KEY = HuaweiAdsCustomEventDataKeys.AD_UNIT_ID_KEY
-    val CONTENT_URL_KEY = HuaweiAdsCustomEventDataKeys.CONTENT_URL_KEY
     private val ADAPTER_NAME: String = interstitial::class.java.getSimpleName()
     private var mHuaweiAdsAdapterConfiguration = HuaweiAdsAdapterConfiguration()
     private var mHuaweiInterstitialAd: InterstitialAd? = null
@@ -69,11 +68,10 @@ class interstitial : BaseAd() {
             builder.setTargetingContentUrl(contentUrl)
         }
 
-        val requestConfigurationBuilder = prepareBuilderViaExtras(extras)
-
         /**
          * Prepare Child-protection keys
          */
+        val requestConfigurationBuilder = prepareBuilderViaExtras(extras)
         val requestConfiguration = requestConfigurationBuilder.build()
         HwAds.setRequestOptions(requestConfiguration)
         val adRequest = builder.build()

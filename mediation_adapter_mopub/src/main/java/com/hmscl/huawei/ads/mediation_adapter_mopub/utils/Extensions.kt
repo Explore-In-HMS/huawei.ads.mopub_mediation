@@ -30,6 +30,9 @@ import com.huawei.hms.ads.nativead.NativeAd
 import com.huawei.hms.ads.nativead.NativeAdConfiguration
 import com.mopub.common.MoPub
 
+/**
+ * Prepare Huawei Ad Request Option obj.
+ */
 fun prepareBuilderViaExtras(extras: Map<String, String>): RequestOptions.Builder {
     val requestConfigurationBuilder = HwAds.getRequestOptions().toBuilder()
 
@@ -91,7 +94,12 @@ fun prepareBuilderViaExtras(extras: Map<String, String>): RequestOptions.Builder
     }
 
     /**
-     * Sets whether to process ad requests as directed to users under the age of consent.
+     * Sets the tag for users in the European Economic Area (EEA) under the age of consent, to comply with the General Data Protection Regulation (GDPR).
+     * Ad requests with this tag enabled will be unable to obtain personalized ads.
+     * The options are as follows:
+     * promiseTrue: You want the ad request to meet the ad standard for users under the age of consent.
+     * promiseFalse: You do not want the ad request to meet the ad standard for users under the age of consent.
+     * promiseUnspecified: You have not specified whether the ad request should meet the ad standard for users under the age of consent.
      */
     // Publishers may want to mark their requests to receive treatment for users in the
     // European Economic Area (EEA) under the age of consent.
@@ -135,6 +143,9 @@ fun prepareBuilderViaExtras(extras: Map<String, String>): RequestOptions.Builder
         requestConfigurationBuilder.setNonPersonalizedAd(NonPersonalizedAd.ALLOW_ALL)
     }
 
+    /**
+     * Sets the user consent string that complies with TCF 2.0.
+     */
     val consent = extras[TAG_CONSENT_STRING]
     if (consent != null) {
         try {
@@ -147,7 +158,7 @@ fun prepareBuilderViaExtras(extras: Map<String, String>): RequestOptions.Builder
 }
 
 /**
- *
+ * Check the @param extra is a direction for Native Ad on [native_basic] & [native_advenced]
  */
 fun isValidOrientationExtra(extra: Any?): Boolean {
     return try {
@@ -159,7 +170,7 @@ fun isValidOrientationExtra(extra: Any?): Boolean {
 }
 
 /**
- *
+ * Check the @param extra is a ChoicesPosition
  */
 fun isValidAdChoicesPlacementExtra(extra: Any?): Boolean {
     return try {
@@ -171,7 +182,7 @@ fun isValidAdChoicesPlacementExtra(extra: Any?): Boolean {
 }
 
 /**
- *
+ * Check the @param huaweiNativeAd is correct
  */
 fun isValidHuaweiNativeAd(huaweiNativeAd: NativeAd): Boolean {
     return huaweiNativeAd.title != null && huaweiNativeAd.images != null && huaweiNativeAd.images.size > 0 && huaweiNativeAd.images[0] != null && huaweiNativeAd.callToAction != null

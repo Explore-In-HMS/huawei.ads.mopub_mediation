@@ -86,6 +86,7 @@ class native_advanced : CustomEventNative() {
 
         fun loadAd(context: Context, adUnitId: String?, localExtras: Map<String?, Any?>, serverExtras: Map<String, String>) {
             val builder = NativeAdLoader.Builder(context, adUnitId)
+            // TODO: 9/14/2021
             if (localExtras.containsKey(KEY_EXPERIMENTAL_EXTRA_SWAP_MARGINS)) {
                 val swapMarginExtra = localExtras[KEY_EXPERIMENTAL_EXTRA_SWAP_MARGINS]
                 if (swapMarginExtra is Boolean) {
@@ -96,7 +97,7 @@ class native_advanced : CustomEventNative() {
             optionsBuilder.setRequestMultiImages(false)
 
             /**
-             *
+             * Sets the orientation of an ad image
              */
             if (localExtras.containsKey(KEY_EXTRA_ORIENTATION_PREFERENCE) && isValidOrientationExtra(
                             localExtras[KEY_EXTRA_ORIENTATION_PREFERENCE]
@@ -113,7 +114,7 @@ class native_advanced : CustomEventNative() {
             }
 
             /**
-             *
+             * Sets the AdChoices icon position
              */
             if (localExtras.containsKey(KEY_EXTRA_AD_CHOICES_PLACEMENT) && isValidAdChoicesPlacementExtra(
                             localExtras[KEY_EXTRA_AD_CHOICES_PLACEMENT]

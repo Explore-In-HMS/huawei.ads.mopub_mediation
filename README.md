@@ -97,7 +97,7 @@ moPubNative.setLocalExtras(
 ```
 > Note: Be aware that custom events parameters in Mopub platform will override your code side changes on the parameters.
 
-[Mediation Child Protection Document](https://github.com/yilmazgokhan/temp-readme/blob/main/Huawei_Mopub_Mediation_Child_Protection.pdf)
+[Mediation Child Protection Document](https://github.com/Explore-In-HMS/huawei.ads.mopub_mediation/blob/main/Huawei_Mopub_Mediation_Child_Protection.pdf)
 
 # Integrate the Huawei Mediation SDK
 

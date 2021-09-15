@@ -1,6 +1,6 @@
 # Huawei-Mopub Mediation Github Documentation
 
-![Latest Version](https://img.shields.io/badge/latestVersion-1.1.1-yellow) ![Kotlin](https://img.shields.io/badge/language-kotlin-blue)
+![Latest Version](https://img.shields.io/badge/latestVersion-1.2.0-yellow) ![Kotlin](https://img.shields.io/badge/language-kotlin-blue)
 
 This is a project to demonstrate how to use MoPub’s mediation feature with Huawei Ads Kit.
 

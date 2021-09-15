@@ -65,6 +65,7 @@ This is a project to demonstrate how to use MoPub’s mediation feature with Hua
 }
 ```
 
+### Parameters Description
 | Key | Description | Possible value |
 | --- | --- | --- |
 | adUnitID  | Huawei Ads Unit ID | String |

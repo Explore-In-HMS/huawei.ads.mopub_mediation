@@ -20,8 +20,10 @@ class HuaweiAdsCustomEventDataKeys {
     companion object {
         const val KEY_EXTRA_APPLICATION_ID = "appid"
         const val AD_UNIT_ID_KEY = "adUnitID"
-        const val TAG_FOR_CHILD_DIRECTED_KEY = "tagForChildDirectedTreatment"
-        const val TAG_FOR_UNDER_AGE_OF_CONSENT_KEY = "tagForUnderAgeOfConsent"
+        const val TAG_FOR_CHILD_PROTECTION_KEY = "tagForChildProtection"
+        const val TAG_FOR_UNDER_AGE_OF_PROMISE_KEY = "tagUnderAgeOfPromise"
+        const val TAG_FOR_AD_CONTENT_CLASSIFICATION_KEY = "tagAdContentClassification"
+        const val TAG_CONSENT_STRING = "tagConsentString"
         const val CONTENT_URL_KEY = "contentUrl"
         const val KEY_EXTRA_ORIENTATION_PREFERENCE = "orientation_preference"
         const val KEY_EXTRA_AD_CHOICES_PLACEMENT = "ad_choices_placement"
@@ -29,15 +31,28 @@ class HuaweiAdsCustomEventDataKeys {
 
         /* Custom Event Data - to be filled on MoPub Platform
         Banner, Interstitial, Rewarded
-        {"appid":"111","adUnitID": "222", "tagForChildDirectedTreatment": "false",
-        "tagForUnderAgeOfConsent": "false", "contentUrl" : "abc"
+        {
+            "appid":"111",
+            "adUnitID": "222",
+            "tagForChildProtection": "false",
+            "tagUnderAgeOfPromise": "false",
+            "tagAdContentClassification": "w/pi/j/a",
+            "tagConsentString": "...",
+            "contentUrl" : "abc"
         }
 
         Native
         {
-        "appid":"111","adUnitID": "222", "tagForChildDirectedTreatment": "false",
-        "tagForUnderAgeOfConsent": "false", "contentUrl" : "abc",
-        "orientation_preference": "aaa", "ad_choices_placement": "bbb", "swap_margins": "ccc"
+            "appid":"111",
+            "adUnitID": "222",
+            "tagForChildProtection": "false",
+            "tagUnderAgeOfPromise": "false",
+            "tagAdContentClassification": "w/pi/j/a",
+            "tagConsentString": "...",
+            "contentUrl" : "abc",
+            "orientation_preference": "aaa",
+            "ad_choices_placement": "bbb",
+            "swap_margins": "ccc"
         }
         */
     }

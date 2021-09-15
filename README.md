@@ -1,4 +1,4 @@
-#Huawei-Mopub Mediation Github Documentation
+# Huawei-Mopub Mediation Github Documentation
 
 ![Latest Version](https://img.shields.io/badge/latestVersion-1.1.1-yellow) ![Kotlin](https://img.shields.io/badge/language-kotlin-blue)
 
@@ -41,54 +41,62 @@ This is a project to demonstrate how to use MoPub’s mediation feature with Hua
 ### Banner, Interstitial, Rewarded
 ```
 {
-    "adUnitID": "222",  <-- Required
-    "appid":"111",
+    "adUnitID": "111",  <-- Required
+    "appid":"222",
     "tagForChildProtection": "false",
     "tagUnderAgeOfPromise": "false",
     "tagAdContentClassification": "false",
     "tagConsentString": "false",
-    "contentUrl" : "abc"
 }
 ```
-Other values are optional
 
 ### Native
 ```
 {
-    "adUnitID": "222",  <-- Required
-    "appid":"111",
+    "adUnitID": "111",  <-- Required
+    "appid":"222",
     "tagForChildProtection": "false",
     "tagUnderAgeOfPromise": "false",
     "tagAdContentClassification": "false",
     "tagConsentString": "false",
-    "contentUrl" : "abc"
-    "orientation_preference" : ""
-    "ad_choices_placement" : ""
-    "swap_margins" : ""
+    "orientation_preference" : "1"
+    "ad_choices_placement" : "1"
+    "swap_margins" : "1"
 }
 ```
-| Key | Description |
-| --- | :---: |
-| adUnitID  | xxx |
-| appid | xxx |
-| tagForChildProtection | Sets the tag for child-directed content, to comply with the Children's Online Privacy Protection Act (COPPA).
-                               * The options are as follows:
-                               * protectionTrue: You want your ad content to be COPPA-compliant (interest-based ads and remarketing ads will be disabled for the ad request).
-                               * protectionFalse: You do not want your ad content to be COPPA-compliant.
-                               * protectionUnspecified: You have not specified whether your ad content needs to be COPPA-compliant. |
-| tagUnderAgeOfPromise |  |
-| tagAdContentClassification |  |
-| tagConsentString |  |
-| contentUrl |  |
-| orientation_preference (Native specific) |  |
-| ad_choices_placement (Native specific) |  |
-| swap_margins (Native specific) |  |
 
+| Key | Description | Possible value |
+| --- | --- | --- |
+| adUnitID  | Huawei Ads Unit ID | String |
+| appid | Huawei Ads App ID | String |
+| tagForChildProtection | Sets the tag for child-directed content, to comply with the Children's Online Privacy Protection Act (COPPA). | <ul><li>`true`: You want your ad content to be COPPA-compliant (interest-based ads and remarketing ads will be disabled for the ad request). </li><li>`false`: You do not want your ad content to be COPPA-compliant. </li></ul> |
+| tagUnderAgeOfPromise | Sets the tag for users in the European Economic Area (EEA) under the age of consent, to comply with the General Data Protection Regulation (GDPR). Ad requests with this tag enabled will be unable to obtain personalized ads. | <ul><li> `true`: You want the ad request to meet the ad standard for users under the age of consent. </li><li> `false`: You do not want the ad request to meet the ad standard for users under the age of consent. </li></ul>  |
+| tagAdContentClassification | Sets the maximum ad content rating for the ad requests of your app. The ads obtained using this method have a content rating at or below the specified one. | <ul><li> `w`: content suitable for widespread audiences. </li><li> `pi`: content suitable for audiences under parental instructions. </li><li> `j`: content suitable for junior and older audiences. </li><li> `a`: content suitable only for adults. </li></ul> |
+| tagConsentString | Sets the user consent string that complies with TCF 2.0. | String |
+| orientation_preference (Native specific) | Sets the orientation of an ad image. | <ul><li> `0`: ANY </li><li> `1`: PORTRAIT </li><li> `2`: LANDSCAPE </li></ul> |
+| ad_choices_placement (Native specific) | Sets the AdChoices icon position | <ul><li> `0`: TOP_LEFT </li><li> `1`: TOP_RIGHT </li><li> `2`: BOTTOM_RIGHT </li><li> `3`: BOTTOM_LEFT </li></ul> |
+| swap_margins (Native specific) | Configure margin | <ul><li> `true`: Set margin on </li><li> `false`: Set margin off </li></ul> |
 
+> Note: All values ​​must be String format.
 
+Also all values can be set dynamically.
 
+```
+moPubNative.setLocalExtras(
+    mapOf(
+        TAG_FOR_CHILD_PROTECTION_KEY to true,
+        TAG_FOR_UNDER_AGE_OF_PROMISE_KEY to true,
+        TAG_FOR_AD_CONTENT_CLASSIFICATION_KEY to true,
+        TAG_CONSENT_STRING to "TCF 2.0 String",
+        KEY_EXTRA_ORIENTATION_PREFERENCE to 1,
+        KEY_EXTRA_AD_CHOICES_PLACEMENT to 1,
+        KEY_EXPERIMENTAL_EXTRA_SWAP_MARGINS to 1
+    )
+)
+```
+> Note: Be aware that custom events parameters in Mopub platform will override your code side changes on the parameters.
 
-
+[Mediation Child Protection Document](https://github.com/yilmazgokhan/temp-readme/blob/main/Huawei_Mopub_Mediation_Child_Protection.pdf)
 
 # Integrate the Huawei Mediation SDK
 
@@ -116,7 +124,7 @@ In the app-level build.gradle, include Huawei Ads dependency (required by the ad
 ```groovy
 dependencies {
     implementation 'com.huawei.hms:ads:3.4.41.304'
-    implementation 'com.github.Explore-In-HMS:huawei.ads.mopub_mediation:1.1.0'
+    implementation 'com.github.Explore-In-HMS:huawei.ads.mopub_mediation:<latest_version>'
 }
 ```
 **Important:**: To add Huawei Ads Kit SDK and Mediation adapter to the cross platforms apps, the native project should be opened with Android Studio.
@@ -296,29 +304,29 @@ Huawei Ads can still be used on Cordova, for implementation click [here](https:/
 
 # Screenshots
 
-## MoPub
+## MoPub Ads
 <table>
 <tr>
 <td>
-<img src="https://user-images.githubusercontent.com/41696219/109938644-51652100-7ce1-11eb-8cdc-e0d1e7deddb8.png" width="200">
+<img src="art/mopub_banner.png" width="200">
 
 Banner Ad
 </td>
 
 <td>
-<img src="https://user-images.githubusercontent.com/41696219/109938812-7e193880-7ce1-11eb-9629-8002e3f949de.JPG" width="200">
+<img src="art/mopub_interstitial.jpg" width="200">
 
 
 Interstitial Ad
 </td>
 
 <td>
-<img src="https://user-images.githubusercontent.com/41696219/109938883-8ec9ae80-7ce1-11eb-877b-d48446c9625d.png" width="200">
+<img src="art/mopub_rewarded.png" width="200">
 
 Rewarded Ad
 </td>
 <td>
-<img src="https://user-images.githubusercontent.com/41696219/109938979-a5700580-7ce1-11eb-97cc-5bb8480607b8.png" width="200">
+<img src="art/mopub_native.png" width="200">
 
 Native Ad
 </td>
@@ -326,26 +334,32 @@ Native Ad
 </tr>
 </table>
 
-## Huawei
+## Huawei Ads
 <table>
 <tr>
 <td>
-<img src="https://user-images.githubusercontent.com/41696219/109939215-e36d2980-7ce1-11eb-8ef4-01d9fff6cd83.png" width="200">
+<img src="art/huawei_banner.jpg" width="200">
 
 Banner Ad
 </td>
 
 <td>
-<img src="https://user-images.githubusercontent.com/41696219/109939330-01d32500-7ce2-11eb-9e39-6a9237ca8c54.JPG" width="200">
+<img src="art/huawei_interstitial.jpg" width="200">
 
 
 Interstitial Ad
 </td>
 
 <td>
-<img src="https://user-images.githubusercontent.com/41696219/109939445-1dd6c680-7ce2-11eb-9e91-fd72b9592d03.JPG" width="200">
+<img src="art/huawei_rewarded.jpg" width="200">
 
 Rewarded Ad
+</td>
+
+<td>
+<img src="art/huawei_native.jpg" width="200">
+
+Native Ad
 </td>
 
 </tr>

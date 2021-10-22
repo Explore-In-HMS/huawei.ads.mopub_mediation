@@ -212,13 +212,13 @@ To use Rewarded ads in Unity, please check the MoPub Unity SDK. Click [here](htt
 Make sure to switch to the Android Platform from **Build Settings -> Android -> Switch Platform**
 #### **Step 2:**
 **Edit -> Project Settings ->  Player -> Other Settings**<br>
-In Other settings set minimum API level to at least **21**.
+In Other Settings set minimum API level to at least **21**.
 #### **Step 3:**
 **Edit -> Project Settings ->  Player -> Publishing Settings**<br>
-In Publishing settings select **“Custom Main Gradle Template”** , **“Custom Base Gradle Template”** and **“Custom Greadle Properties Template”** <br>
+In Publishing Settings select **“Custom Main Gradle Template”** , **“Custom Base Gradle Template”** and **“Custom Greadle Properties Template”** <br>
 This will let you override **mainTemplate.gradle** , **baseProjectTemplate.gradle** and **gradleTemplate.properties** files in the project.
 #### **Step 4:**
-**baseProjectTemplate.gradle** is equal to **project-level gradle** so you have to include **Huawei's Maven repositorys** from the Integrate the Huawei Mediation SDK section from [**here**](#integrate-huawei-sdk) <br>
+**baseProjectTemplate.gradle** is equal to **project-level gradle** so you have to include **Huawei's Maven repositories** from the Integrate the Huawei Mediation SDK section from [**here**](#integrate-huawei-sdk) <br>
 **mainTemplate.gradle** is equal to **app-level build.gradle** so you have to include **dependencies** from the Integrate the Huawei Mediation SDK section from [**here**](#app-level).
 
 ## React Native

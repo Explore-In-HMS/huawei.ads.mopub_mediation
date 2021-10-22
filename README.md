@@ -220,6 +220,25 @@ This will let you override **mainTemplate.gradle** , **baseProjectTemplate.gradl
 #### **Step 4:**
 **baseProjectTemplate.gradle** is equal to **project-level gradle** so you have to include **Huawei's Maven repositories** from the Integrate the Huawei Mediation SDK section from [**here**](#integrate-huawei-sdk) <br>
 **mainTemplate.gradle** is equal to **app-level build.gradle** so you have to include **dependencies** from the Integrate the Huawei Mediation SDK section from [**here**](#app-level).
+#### **Step 5:**
+Open **gradleTemplate.properties** and add the following lines
+```groovy
+android.useAndroidX=true
+android.enableJetifier=true
+```
+
+**After these configurations is completed you can display Huawei Ads.**
+
+**Note:** 
+In case of any error on aaptOptions you can add the following line to aaptOptions in **launcherTemplate.gradle** which you override it by enabiling it from **Edit -> Project Settings ->  Player -> Publishing Settings**
+
+```groovy
+aaptOptions {
+        noCompress = ['.ress', '.resource', '.obb'] + unityStreamingAssets.tokenize(', ')
+        ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~"
+    }
+```
+
 
 ## React Native
 

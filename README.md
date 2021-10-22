@@ -1,6 +1,8 @@
 # Huawei-Mopub Mediation Github Documentation
 
 ![Latest Version](https://img.shields.io/badge/latestVersion-1.2.0-yellow) ![Kotlin](https://img.shields.io/badge/language-kotlin-blue)
+<br>
+![Supported Platforms](https://img.shields.io/badge/Supported_Platforms:-Native_Android_,_Unity_,_React_Native_,_Flutter-orange)
 
 This is a project to demonstrate how to use MoPub’s mediation feature with Huawei Ads Kit.
 
@@ -9,17 +11,21 @@ This is a project to demonstrate how to use MoPub’s mediation feature with Hua
 |   | Banner Ad | Interstitial Ad | Rewarded Ad | Native Ad |
 | --- | --- | --- | --- | --- |
 | Native (Java/Kotlin) | ✅ | ✅ | ✅ | ✅ |
+| Unity |✅|✅| ✅ | ❌ |
 | React Native | ❌ | ✅ | ❌ | ❌ |
 | Flutter |✅|✅| ✅ | ❌ |
-| Cordova |❌|❌| ❌ | ❌ |
+
 
 # How to start?
   
 ## Create an ad unit on Huawei Publisher Service
 
-1. Sign in to [Huawei Developer Console] (https://developer.huawei.com/consumer/en/console) and create an AdUnit
+1. Sign in to [Huawei Developer Console](https://developer.huawei.com/consumer/en/console) and create an AdUnit
 
 ## Create a custom event on MoPub:
+
+Make sure to check the article on **[How to use Huawei Ads with MoPub mediation](https://medium.com/huawei-developers/how-to-use-huawei-ads-with-mopub-mediation-1f49adfdb2b1)**
+
 1. Sign in to your [Huawei Developer Console](https://developer.huawei.com/consumer/en/console) and create an AdUnit
 2. Sign in to your [MoPub console](https://app.mopub.com/)
 3. Go to one of your orders and create a new line item
@@ -38,10 +44,12 @@ This is a project to demonstrate how to use MoPub’s mediation feature with Hua
 
 ## Custom Event Parameters
 
+**Note:** Using the event parameter keys while testing may result test ads to not return.
+
 ### Banner, Interstitial, Rewarded
 ```
 {
-    "adUnitID": "111",  <-- Required
+    "adUnitID": "111",  <-- Mandatory Field
     "appid":"222",
     "tagForChildProtection": "false",
     "tagUnderAgeOfPromise": "false",
@@ -53,7 +61,7 @@ This is a project to demonstrate how to use MoPub’s mediation feature with Hua
 ### Native
 ```
 {
-    "adUnitID": "111",  <-- Required
+    "adUnitID": "111",  <-- Mandatory Field
     "appid":"222",
     "tagForChildProtection": "false",
     "tagUnderAgeOfPromise": "false",
@@ -64,7 +72,6 @@ This is a project to demonstrate how to use MoPub’s mediation feature with Hua
     "swap_margins" : "1"
 }
 ```
-
 ### Parameters Description
 | Key | Description | Possible value |
 | --- | --- | --- |
@@ -99,9 +106,13 @@ moPubNative.setLocalExtras(
 
 [Mediation Child Protection Document](https://github.com/Explore-In-HMS/huawei.ads.mopub_mediation/blob/main/Huawei_Mopub_Mediation_Child_Protection.pdf)
 
-# Integrate the Huawei Mediation SDK
+Make sure to check the article on [Huawei Mopub Mediation - Child Protection](https://medium.com/huawei-developers/huawei-mopub-mediation-child-protection-e34b4817269f)
 
-In the project-level build.gradle, include Huawei’s maven repository
+<h1 id="integrate-huawei-sdk">
+Integrate the Huawei Mediation SDK
+</h1>
+
+In the **project-level build.gradle**, include Huawei’s maven repository
 
 ```groovy
 repositories {
@@ -120,7 +131,10 @@ allprojects {
     }
 }
 ```
-In the app-level build.gradle, include Huawei Ads dependency (required by the adapter) and the Huawei mediation adapter
+<h1 id="app-level">
+</h1>
+
+In the **app-level build.gradle**, include Huawei Ads dependency (required by the adapter) and the Huawei mediation adapter
 
 ```groovy
 dependencies {
@@ -175,9 +189,43 @@ To use Rewarded ads in Native android apps, please check the MoPub SDK. Click [h
 
 To use Native ads in Native android apps, please check the MoPub SDK. Click [here](https://developers.mopub.com/publishers/android/native-recyclerview/) to get more information about MoPub SDKs Native Ad development.
 
+## **Unity**
+
+This section demonstrates how to use MoPub mediation feature with Huawei Ads Kit on Unity.
+
+**Supported Ad Formats are:** Banner Ads, Interstitial Ads and Rewarded Ads.
+
+Firstly, integrate the MoPub Unity SDK to Unity.
+
+For more details on MoPub Unity SDK visit [here](https://developers.mopub.com/publishers/unity/integrate/)
+
+### **Banner Ads**
+To use Banner ads in Unity , please check the MoPub Unity SDK. Click [here](https://developers.mopub.com/publishers/unity/banner/) to get more information about Mopub Unity SDKs Banner Ad development. 
+
+### **Interstitial Ads**
+To use Interstitial ads in Unity, please check the MoPub Unity SDK. Click [here](https://developers.mopub.com/publishers/unity/interstitial/) to get more information about Mopub Unity SDKs Interstitial Ad development.
+
+### **Rewarded Ads**
+To use Rewarded ads in Unity, please check the MoPub Unity SDK. Click [here](https://developers.mopub.com/publishers/unity/rewarded-ad/) to get more information about Mopub Unity SDKs Banner Ad development.
+
+#### **Step 1:** 
+Make sure to switch to the Android Platform from **Build Settings -> Android -> Switch Platform**
+#### **Step 2:**
+**Edit -> Project Settings ->  Player -> Other Settings**<br>
+In Other settings set minimum API level to at least **21**.
+#### **Step 3:**
+**Edit -> Project Settings ->  Player -> Publishing Settings**<br>
+In Publishing settings select **“Custom Main Gradle Template”** , **“Custom Base Gradle Template”** and **“Custom Greadle Properties Template”** <br>
+This will let you override **mainTemplate.gradle** , **baseProjectTemplate.gradle** and **gradleTemplate.properties** files in the project.
+#### **Step 4:**
+**baseProjectTemplate.gradle** is equal to **project-level gradle** so you have to include **Huawei's Maven repositorys** from the Integrate the Huawei Mediation SDK section from [**here**](#integrate-huawei-sdk) <br>
+**mainTemplate.gradle** is equal to **app-level build.gradle** so you have to include **dependencies** from the Integrate the Huawei Mediation SDK section from [**here**](#app-level).
+
 ## React Native
 
 This section demonstrates how to use MoPub mediation feature with Huawei Ads Kit on React Native apps.
+
+Make sure to check the article on [How to use Huawei Ads with MoPub mediation (React Native)](https://medium.com/huawei-developers/how-to-use-huawei-ads-with-mopub-mediation-react-native-7381cd339098)
 
 **Important:** There is no official React Native SDK for MoPub, therefore third party SDKs has been used in the demonstrations.
 
@@ -218,6 +266,8 @@ Native ads are not supported with this SDK. To use Native ads in React Native ap
 ## Flutter
 
 This section demonstrates how to use MoPub mediation feature with Huawei Ads Kit on Flutter.
+
+Make sure to check the article on [How to show Huawei ads in Flutter using Mopub mediation?)](https://medium.com/huawei-developers/how-to-show-huawei-ads-in-flutter-using-mopub-mediation-9e40adf8e45d)
 
 **Important:** There is no official Flutter SDK for MoPub therefore third party SDKs has been used in the demonstrations.
 

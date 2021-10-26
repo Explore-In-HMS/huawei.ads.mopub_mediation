@@ -119,6 +119,7 @@ repositories {
     google()
     jcenter() // Also, make sure jcenter() is included
     maven { url 'https://developer.huawei.com/repo/' } // Add this line
+    maven {url "https://jitpack.io"} // Add this line
 }
 
 ...
@@ -128,6 +129,7 @@ allprojects {
         google()
         jcenter() // Also, make sure jcenter() is included
         maven { url 'https://developer.huawei.com/repo/' } //Add this line
+        maven {url "https://jitpack.io"} // Add this line
     }
 }
 ```
@@ -192,6 +194,8 @@ To use Native ads in Native android apps, please check the MoPub SDK. Click [her
 ## **Unity**
 
 This section demonstrates how to use MoPub mediation feature with Huawei Ads Kit on Unity.
+
+Make sure to check the article on [How to use Huawei Ads with Supported Ad Platforms in Unity ?](https://medium.com/huawei-developers/how-to-use-huawei-ads-with-supported-ad-platforms-in-unity-2be08c943a7f)
 
 **Supported Ad Formats are:** Banner Ads, Interstitial Ads and Rewarded Ads.
 

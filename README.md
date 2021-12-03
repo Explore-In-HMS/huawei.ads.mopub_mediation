@@ -54,7 +54,7 @@ Make sure to check the article on **[How to use Huawei Ads with MoPub mediation]
     "tagForChildProtection": "false",
     "tagUnderAgeOfPromise": "false",
     "tagAdContentClassification": "w",
-    "tagConsentString": "false"
+    "tagConsentString": ""
 }
 ```
 

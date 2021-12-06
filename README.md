@@ -390,6 +390,13 @@ Because MoPub ads for Cordova platform is not officially supported and there is 
 
 Huawei Ads can still be used on Cordova, for implementation click [here](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/introduction-0000001050437673).
 
+# Error Codes
+**Error code 700** : Your request has been failed. Make sure that you are using test AdUnit Id while testing the mediation.
+
+**Error code 3** : Ad request is successful but the server does not return available ad assets Make sure that you are using test AdUnit Id while testing the mediation.
+
+**MoPubErrorCode "NO_FILL" / "No ads found"** : Make sure that your Custom Event Parameters are correct. Be aware that Custom Event Parameters are JSON's and it shouldn't end with a comma (",").
+
 
 # Screenshots
 

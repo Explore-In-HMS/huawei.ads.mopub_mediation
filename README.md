@@ -140,10 +140,15 @@ In the **app-level build.gradle**, include Huawei Ads dependency (required by th
 
 ```groovy
 dependencies {
-    implementation 'com.huawei.hms:ads:3.4.41.304'
+    implementation 'com.huawei.hms:ads:3.4.49.301'
     implementation 'com.github.Explore-In-HMS:huawei.ads.mopub_mediation:<latest_version>'
 }
 ```
+[Check the latest Huawei Ads SDK here](https://developer.huawei.com/consumer/en/doc/development/HMSCore-Guides/publisher-service-version-change-history-0000001050066909)
+
+[Check the latest version of adapter here](#version-change-history)
+
+
 **Important:**: To add Huawei Ads Kit SDK and Mediation adapter to the cross platforms apps, the native project should be opened with Android Studio.
 
 **Important:** A device with Huawei Mobile Services (HMS) installed is required.
@@ -162,6 +167,17 @@ The HUAWEI Ads SDK (com.huawei.hms:ads) has integrated the required permissions.
 **android.permission.READ_CALENDAR:** Reads calendar events and their subscription statuses. (The permission can be removed if not necessary.) <br />
 
 **android.permission.WRITE_CALENDAR:** Creates a calendar event when a user clicks the subscription button in an ad. (The permission can be removed if not necessary.) <br />
+
+
+# Version Change History
+
+## 1.2.0
+
+Child protection has been added.
+
+## 1.1.1
+
+Uses 'com.huawei.hms:ads:3.4.41.304' dependency for GMS phones
 
 # Platforms
 

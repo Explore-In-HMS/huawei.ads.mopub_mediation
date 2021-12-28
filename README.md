@@ -4,7 +4,9 @@
 <br>
 ![Supported Platforms](https://img.shields.io/badge/Supported_Platforms:-Native_Android_,_Unity_,_React_Native_,_Flutter-orange)
 
-This is a project to demonstrate how to use MoPub’s mediation feature with Huawei Ads Kit.
+# Introduction
+
+In this documentation we explained how to use Huawei-MoPub mediation with in the different platforms.
 
 # Compatibility
 
@@ -14,7 +16,6 @@ This is a project to demonstrate how to use MoPub’s mediation feature with Hua
 | Unity |✅|✅| ✅ | ❌ |
 | React Native | ❌ | ✅ | ❌ | ❌ |
 | Flutter |✅|✅| ✅ | ❌ |
-
 
 # How to start?
   

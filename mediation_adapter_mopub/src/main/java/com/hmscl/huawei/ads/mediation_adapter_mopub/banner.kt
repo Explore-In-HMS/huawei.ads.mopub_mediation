@@ -19,8 +19,8 @@ package com.hmscl.huawei.ads.mediation_adapter_mopub
 import android.app.Activity
 import android.content.Context
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
-import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys.Companion.AD_UNIT_ID_KEY
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.HuaweiAdsCustomEventDataKeys.Companion.CONTENT_URL_KEY
 import com.hmscl.huawei.ads.mediation_adapter_mopub.utils.prepareBuilderViaExtras
@@ -37,6 +37,8 @@ import com.mopub.common.util.Views
 import com.mopub.mobileads.AdData
 import com.mopub.mobileads.BaseAd
 import com.mopub.mobileads.MoPubErrorCode
+import java.io.PrintWriter
+import java.io.StringWriter
 
 class banner : BaseAd() {
     val ADAPTER_NAME = banner::class.java.simpleName
@@ -46,129 +48,184 @@ class banner : BaseAd() {
     private var adHeight: Int? = null
 
     override fun load(context: Context, adData: AdData) {
-        Preconditions.checkNotNull(context)
-        Preconditions.checkNotNull(adData)
-        adWidth = adData.adWidth
-        adHeight = adData.adHeight
-        val extras = adData.extras
-        mAdUnitId = extras[AD_UNIT_ID_KEY]
+        Log.d("TAG", "Banner - load()")
 
-        mHuaweiAdView = BannerView(context)
-        mHuaweiAdView.adListener = AdViewListener()
-        mHuaweiAdView.adId = mAdUnitId
+        try {
+            Preconditions.checkNotNull(context)
+            Preconditions.checkNotNull(adData)
+            adWidth = adData.adWidth
+            adHeight = adData.adHeight
+            val extras = adData.extras
 
-        val adSize: BannerAdSize? =
+            if (extras.isNullOrEmpty()) {
+                Log.e("TAG", "Banner - load() - adData.extras is empty or null")
+
+                MoPubLog.log(adNetworkId, AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
+                    MoPubErrorCode.ADAPTER_CONFIGURATION_ERROR.intCode,
+                    MoPubErrorCode.ADAPTER_CONFIGURATION_ERROR
+                )
+            }
+
+            if(!extras.containsKey(AD_UNIT_ID_KEY)){
+                Log.e("TAG", "Banner - load() - adData.extras is not contain adUnitID")
+            }
+
+            mAdUnitId = extras[AD_UNIT_ID_KEY]
+            Log.d("TAG", "Banner - load() - adData.extras => {adUnitID = $mAdUnitId}")
+
+            mHuaweiAdView = BannerView(context)
+            mHuaweiAdView.adListener = AdViewListener()
+            mHuaweiAdView.adId = mAdUnitId
+
+            val adSize: BannerAdSize? =
                 if (adWidth == null || adHeight == null || adWidth!! <= 0 || adHeight!! <= 0) null else BannerAdSize(
-                        adWidth!!,
-                        adHeight!!
+                    adWidth!!,
+                    adHeight!!
                 )
 
-        if (adSize != null) {
-            mHuaweiAdView.bannerAdSize = adSize
-        } else {
-            MoPubLog.log(
+            if (adSize != null) {
+                Log.d("TAG", "Banner - load() - adSize width : $adWidth , adSize height $adHeight")
+                mHuaweiAdView.bannerAdSize = adSize
+            } else {
+                Log.e("TAG", "Banner - load() - adSize is null")
+                MoPubLog.log(
                     adNetworkId,
                     AdapterLogEvent.LOAD_FAILED,
                     ADAPTER_NAME,
                     MoPubErrorCode.NETWORK_NO_FILL.intCode,
                     MoPubErrorCode.NETWORK_NO_FILL
-            )
+                )
+                mLoadListener?.onAdLoadFailed(MoPubErrorCode.NETWORK_NO_FILL)
+                return
+            }
 
-            mLoadListener?.onAdLoadFailed(MoPubErrorCode.NETWORK_NO_FILL)
-            return
+            val builder = AdParam.Builder()
+            builder.setRequestOrigin("MoPub")
+
+            if(!extras.containsKey(CONTENT_URL_KEY)){
+                Log.e("TAG", "Banner - load() - adData.extras is not contain contentUrl")
+            }
+
+            val contentUrl = extras[CONTENT_URL_KEY]
+
+            if (!TextUtils.isEmpty(contentUrl)) {
+                builder.setTargetingContentUrl(contentUrl)
+                Log.d("TAG", "Banner - load() - adData.extras => {contentUrl = $contentUrl}")
+
+            }else{
+                Log.e("TAG", "Banner - load() - adData.extras => contentUrl key is empty")
+            }
+
+            /**
+             * Prepare Child-protection keys
+             */
+            val requestConfigurationBuilder = prepareBuilderViaExtras(extras)
+            val requestConfiguration = requestConfigurationBuilder.build()
+            HwAds.setRequestOptions(requestConfiguration)
+
+            val adRequest = builder.build()
+            mHuaweiAdView.loadAd(adRequest)
+            MoPubLog.log(adNetworkId, AdapterLogEvent.LOAD_ATTEMPTED, ADAPTER_NAME)
+            Log.d("TAG", "Banner - load() - adapter attempting to load ad")
+
+        } catch (e: Exception) {
+            val stacktrace =
+                StringWriter().also { e.printStackTrace(PrintWriter(it)) }.toString().trim()
+            Log.e("TAG", "Banner - loadAd() - Request Banner Ad Failed: $stacktrace")
+            mHuaweiAdView.adListener.onAdFailed(AdParam.ErrorCode.INNER)
         }
 
-        val builder = AdParam.Builder()
-        builder.setRequestOrigin("MoPub")
-
-        val contentUrl = extras[CONTENT_URL_KEY]
-        if (!TextUtils.isEmpty(contentUrl)) {
-            builder.setTargetingContentUrl(contentUrl)
-        }
-
-        /**
-         * Prepare Child-protection keys
-         */
-        val requestConfigurationBuilder = prepareBuilderViaExtras(extras)
-        val requestConfiguration = requestConfigurationBuilder.build()
-        HwAds.setRequestOptions(requestConfiguration)
-
-        val adRequest = builder.build()
-        mHuaweiAdView.loadAd(adRequest)
-        MoPubLog.log(adNetworkId, AdapterLogEvent.LOAD_ATTEMPTED, ADAPTER_NAME)
     }
 
     override fun getAdView(): View? {
+        Log.d("TAG", "Banner - getAdView()")
         return mHuaweiAdView
     }
 
     override fun onInvalidate() {
+        Log.d("TAG", "Banner - onInvalidate()")
         Views.removeFromParent(mHuaweiAdView)
         mHuaweiAdView.adListener = null
         mHuaweiAdView.destroy()
     }
 
     override fun getLifecycleListener(): LifecycleListener? {
+        Log.d("TAG", "Banner - getLifecycleListener()")
         return null
     }
 
     override fun getAdNetworkId(): String {
-        return if (mAdUnitId == null) "" else mAdUnitId!!
+        Log.d("TAG", "Banner - getAdNetworkId()")
+        return if (mAdUnitId == null) {
+            Log.d("TAG", "Banner - getAdNetworkId() - mAdUnitId is null")
+            ""
+        } else {
+            mAdUnitId!!
+        }
     }
 
     override fun checkAndInitializeSdk(
-            launcherActivity: Activity,
-            adData: AdData
+        launcherActivity: Activity,
+        adData: AdData
     ): Boolean {
+        Log.d("TAG", "Banner - checkAndInitializeSdk()")
         return false
     }
 
     private inner class AdViewListener : AdListener() {
-        override fun onAdClosed() {
-            super.onAdClosed()
-        }
 
         override fun onAdFailed(loadAdError: Int) {
+            Log.e(
+                "TAG",
+                "Banner - AdViewListener - onAdFailed() - Failed to load Huawei banners with loadError: $loadAdError"
+            )
+
             MoPubLog.log(
-                    adNetworkId, AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
-                    getMoPubErrorCode(loadAdError)!!.intCode,
-                    getMoPubErrorCode(loadAdError)
+                adNetworkId, AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
+                getMoPubErrorCode(loadAdError)!!.intCode,
+                getMoPubErrorCode(loadAdError)
             )
             MoPubLog.log(
-                    adNetworkId, AdapterLogEvent.CUSTOM, ADAPTER_NAME, "Failed to load Huawei " +
-                    "banners with message: " + loadAdError + ". Caused by: " +
-                    loadAdError
+                adNetworkId, AdapterLogEvent.CUSTOM, ADAPTER_NAME, "Failed to load Huawei " +
+                        "banners with message: " + loadAdError + ". Caused by: " +
+                        loadAdError
             )
 
             mLoadListener?.onAdLoadFailed(getMoPubErrorCode(loadAdError)!!)
         }
 
-        override fun onAdLeave() {
-            super.onAdLeave()
-        }
-
         override fun onAdOpened() {
+            Log.d("TAG", "Banner - AdViewListener - onAdOpened()")
             MoPubLog.log(adNetworkId, AdapterLogEvent.CLICKED, ADAPTER_NAME)
 
             mInteractionListener?.onAdClicked()
         }
 
         override fun onAdLoaded() {
+            Log.d("TAG", "Banner - AdViewListener - onAdLoaded()")
+
             val receivedWidth: Int = mHuaweiAdView.bannerAdSize.width
             val receivedHeight: Int = mHuaweiAdView.bannerAdSize.height
 
             if (receivedWidth > adWidth!! || receivedHeight > adHeight!!) {
+                Log.e(
+                    "TAG",
+                    "Banner - AdViewListener - onAdLoaded() - Huawei served an ad but it was invalidated because its size of h: $receivedWidth and w: $receivedHeight " +
+                            "exceeds the publisher-specified size of w: $adWidth and h: $adHeight"
+                )
+
                 MoPubLog.log(
-                        adNetworkId, AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
-                        MoPubErrorCode.NETWORK_NO_FILL.intCode, MoPubErrorCode.NETWORK_NO_FILL
+                    adNetworkId, AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
+                    MoPubErrorCode.NETWORK_NO_FILL.intCode, MoPubErrorCode.NETWORK_NO_FILL
                 )
                 MoPubLog.log(
-                        adNetworkId, AdapterLogEvent.CUSTOM, ADAPTER_NAME, "Huawei served an ad but" +
-                        " it was invalidated because its size of " + receivedWidth + " x " + receivedHeight +
-                        " exceeds the publisher-specified size of " + adWidth + " x " + adHeight
+                    adNetworkId, AdapterLogEvent.CUSTOM, ADAPTER_NAME, "Huawei served an ad but" +
+                            " it was invalidated because its size of " + receivedWidth + " x " + receivedHeight +
+                            " exceeds the publisher-specified size of " + adWidth + " x " + adHeight
                 )
                 mLoadListener?.onAdLoadFailed(getMoPubErrorCode(MoPubErrorCode.NETWORK_NO_FILL.intCode)!!)
             } else {
+                Log.d("TAG","Banner - AdViewListener - onAdLoaded() - Ad successfully loaded")
                 MoPubLog.log(adNetworkId, AdapterLogEvent.LOAD_SUCCESS, ADAPTER_NAME)
                 MoPubLog.log(adNetworkId, AdapterLogEvent.SHOW_ATTEMPTED, ADAPTER_NAME)
                 MoPubLog.log(adNetworkId, AdapterLogEvent.SHOW_SUCCESS, ADAPTER_NAME)
@@ -177,13 +234,10 @@ class banner : BaseAd() {
         }
 
         override fun onAdClicked() {
+            Log.d("TAG","Banner - AdViewListener - onAdClicked()")
             MoPubLog.log(adNetworkId, AdapterLogEvent.CLICKED, ADAPTER_NAME)
 
             mInteractionListener?.onAdClicked()
-        }
-
-        override fun onAdImpression() {
-            super.onAdImpression()
         }
 
         private fun getMoPubErrorCode(error: Int): MoPubErrorCode? {

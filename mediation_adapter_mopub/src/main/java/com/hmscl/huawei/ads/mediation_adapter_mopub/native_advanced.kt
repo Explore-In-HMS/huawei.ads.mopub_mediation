@@ -55,40 +55,40 @@ class native_advanced : CustomEventNative() {
         serverExtras: Map<String, String>
     ) {
         try {
-            Log.d("TAG", "Native Advanced - loadNativeAd()")
+            Log.d(ADAPTER_NAME, "Native Advanced - loadNativeAd()")
 
             Preconditions.checkNotNull(context)
             Preconditions.checkNotNull(customEventNativeListener)
             Preconditions.checkNotNull(localExtras)
             if (!sIsInitialized.getAndSet(true)) {
                 HwAds.init(context)
-                Log.d("TAG", "Native Advanced - loadNativeAd() - init")
+                Log.d(ADAPTER_NAME, "Native Advanced - loadNativeAd() - init")
             }
 
             if (serverExtras.isNullOrEmpty()) {
-                Log.e("TAG", "Native Advanced - loadNativeAd() - serverExtras is empty or null")
+                Log.e(ADAPTER_NAME, "Native Advanced - loadNativeAd() - serverExtras is empty or null")
             }
 
             if (localExtras.isNullOrEmpty()) {
-                Log.e("TAG", "Native Advanced - loadNativeAd() - localExtras is empty or null")
+                Log.e(ADAPTER_NAME, "Native Advanced - loadNativeAd() - localExtras is empty or null")
             }
 
             if (!serverExtras.containsKey(AD_UNIT_ID_KEY)) {
                 Log.e(
-                    "TAG",
+                    ADAPTER_NAME,
                     "Native Advanced - loadNativeAd() - serverExtras is not contain adUnitID"
                 )
             }
 
             mAdUnitId = serverExtras[AD_UNIT_ID_KEY]
             Log.d(
-                "TAG",
+                ADAPTER_NAME,
                 "Native Advanced - loadNativeAd() - serverExtras => {adUnitID = $mAdUnitId}"
             )
 
             if (TextUtils.isEmpty(mAdUnitId)) {
                 Log.e(
-                    "TAG",
+                    ADAPTER_NAME,
                     "Native Advanced - loadNativeAd() - serverExtras => adUnitID key is empty"
                 )
                 customEventNativeListener.onNativeAdFailed(NativeErrorCode.NETWORK_NO_FILL)
@@ -103,16 +103,16 @@ class native_advanced : CustomEventNative() {
             val nativeAd = HuaweiNativeAd(customEventNativeListener)
             nativeAd.loadAd(context, mAdUnitId, localExtras, serverExtras)
             mHuaweiAdapterConfiguration.setCachedInitializationParameters(context, serverExtras)
-            Log.d("TAG", "Native Advanced - loadNativeAd() - adapter attempting to load ad")
+            Log.d(ADAPTER_NAME, "Native Advanced - loadNativeAd() - adapter attempting to load ad")
 
         } catch (e: Exception) {
             val stacktrace =
                 StringWriter().also { e.printStackTrace(PrintWriter(it)) }.toString().trim()
             Log.e(
-                "TAG",
+                ADAPTER_NAME,
                 "Native Advanced - loadNativeAd() - Request Native Advanced Ad Failed: $stacktrace"
             )
-//            nativeAd.adListener.onAdFailed(AdParam.ErrorCode.INNER) TODO
+            customEventNativeListener.onNativeAdFailed(NativeErrorCode.NETWORK_INVALID_STATE)
         }
 
     }
@@ -138,14 +138,14 @@ class native_advanced : CustomEventNative() {
             localExtras: Map<String?, Any?>,
             serverExtras: Map<String, String>
         ) {
-            Log.d("TAG", "Native Advanced - HuaweiNativeAd - loadAd()")
+            Log.d(ADAPTER_NAME, "Native Advanced - HuaweiNativeAd - loadAd()")
 
             val builder = NativeAdLoader.Builder(context, adUnitId)
-            // TODO: 9/14/2021
+
             if (localExtras.containsKey(KEY_EXPERIMENTAL_EXTRA_SWAP_MARGINS)) {
                 val swapMarginExtra = localExtras[KEY_EXPERIMENTAL_EXTRA_SWAP_MARGINS]
                 Log.d(
-                    "TAG",
+                    ADAPTER_NAME,
                     "Native Advanced - HuaweiNativeAd - loadAd() - localExtras => {swap_margins = $swapMarginExtra}"
                 )
 
@@ -154,7 +154,7 @@ class native_advanced : CustomEventNative() {
                 }
             } else {
                 Log.e(
-                    "TAG",
+                    ADAPTER_NAME,
                     "Native Advanced - HuaweiNativeAd - loadAd() - localExtras is not contain swap_margins"
                 )
             }
@@ -172,7 +172,7 @@ class native_advanced : CustomEventNative() {
                     localExtras[KEY_EXTRA_ORIENTATION_PREFERENCE].toString().toInt()
                 )
                 Log.d(
-                    "TAG",
+                    ADAPTER_NAME,
                     "Native Advanced - HuaweiNativeAd - loadAd() - localExtras => {orientation_preference = ${localExtras[KEY_EXTRA_ORIENTATION_PREFERENCE]}}"
                 )
 
@@ -182,7 +182,7 @@ class native_advanced : CustomEventNative() {
             ) {
                 optionsBuilder.setMediaDirection(serverExtras[KEY_EXTRA_ORIENTATION_PREFERENCE]!!.toInt())
                 Log.d(
-                    "TAG",
+                    ADAPTER_NAME,
                     "Native Advanced - HuaweiNativeAd - loadAd() - serverExtras => {orientation_preference = ${serverExtras[KEY_EXTRA_ORIENTATION_PREFERENCE]}}"
                 )
             }
@@ -198,7 +198,7 @@ class native_advanced : CustomEventNative() {
                     localExtras[KEY_EXTRA_AD_CHOICES_PLACEMENT].toString().toInt()
                 )
                 Log.d(
-                    "TAG",
+                    ADAPTER_NAME,
                     "Native Advanced - HuaweiNativeAd - loadAd() - localExtras => {ad_choices_placement = ${localExtras[KEY_EXTRA_AD_CHOICES_PLACEMENT]}}"
                 )
             } else if (serverExtras.containsKey(KEY_EXTRA_AD_CHOICES_PLACEMENT) && isValidAdChoicesPlacementExtra(
@@ -207,7 +207,7 @@ class native_advanced : CustomEventNative() {
             ) {
                 optionsBuilder.setChoicesPosition(serverExtras[KEY_EXTRA_AD_CHOICES_PLACEMENT]!!.toInt())
                 Log.d(
-                    "TAG",
+                    ADAPTER_NAME,
                     "Native Advanced - HuaweiNativeAd - load() - serverExtras => {ad_choices_placement = ${serverExtras[KEY_EXTRA_AD_CHOICES_PLACEMENT]}}"
                 )
             }
@@ -217,7 +217,7 @@ class native_advanced : CustomEventNative() {
                 it
                 if (!isValidHuaweiNativeAd(it)) {
                     Log.e(
-                        "TAG",
+                        ADAPTER_NAME,
                         "Native Advanced - HuaweiNativeAd - loadAd() - The Huawei native unified ad is missing one or more required assets, failing request"
                     )
                     MoPubLog.log(
@@ -247,7 +247,7 @@ class native_advanced : CustomEventNative() {
                     preCacheImages(context, imageUrls)
 
                     Log.d(
-                        "TAG",
+                        ADAPTER_NAME,
                         "Native Advanced - HuaweiNativeAd - loadAd() - adLoader initializing"
                     )
                 }
@@ -258,7 +258,7 @@ class native_advanced : CustomEventNative() {
                     MoPubLog.log(getAdNetworkId(), AdapterLogEvent.CLICKED, ADAPTER_NAME)
 
                     Log.d(
-                        "TAG",
+                        ADAPTER_NAME,
                         "Native Advanced - HuaweiNativeAd - loadAd() - onAdClicked() triggered"
                     )
                 }
@@ -269,7 +269,7 @@ class native_advanced : CustomEventNative() {
                     MoPubLog.log(getAdNetworkId(), AdapterLogEvent.SHOW_SUCCESS, ADAPTER_NAME)
 
                     Log.d(
-                        "TAG",
+                        ADAPTER_NAME,
                         "Native Advanced - HuaweiNativeAd - loadAd() - onAdImpression() triggered"
                     )
                 }
@@ -287,7 +287,7 @@ class native_advanced : CustomEventNative() {
                     )
 
                     Log.e(
-                        "TAG",
+                        ADAPTER_NAME,
                         "Native Advanced - HuaweiNativeAd - loadAd() - onAdFailed() triggered - Failed to load Huawei Native Advanced ad with load message $loadAdError. Caused by $loadAdError"
                     )
 
@@ -315,20 +315,20 @@ class native_advanced : CustomEventNative() {
             requestBuilder.setRequestOrigin("MoPub")
 
             if(!localExtras.containsKey(CONTENT_URL_KEY)){
-                Log.e("TAG", "Native Advanced - HuaweiNativeAd - loadAd() - localExtras is not contain contentUrl")
+                Log.e(ADAPTER_NAME, "Native Advanced - HuaweiNativeAd - loadAd() - localExtras is not contain contentUrl")
             }
             // Publishers may append a content URL by passing it to the MoPubNative.setLocalExtras() call.
             val contentUrl = localExtras[CONTENT_URL_KEY] as String?
 
             if (!TextUtils.isEmpty(contentUrl)) {
                 requestBuilder.setTargetingContentUrl(contentUrl)
-                Log.d("TAG", "Native Advanced - HuaweiNativeAd - load() - localExtras => {contentUrl = $contentUrl}")
+                Log.d(ADAPTER_NAME, "Native Advanced - HuaweiNativeAd - load() - localExtras => {contentUrl = $contentUrl}")
 
             } else if (!TextUtils.isEmpty(serverExtras[CONTENT_URL_KEY])) {
                 requestBuilder.setTargetingContentUrl(serverExtras[CONTENT_URL_KEY])
-                Log.d("TAG", "Native Advanced - HuaweiNativeAd - load() - serverExtras => {contentUrl = $contentUrl}")
+                Log.d(ADAPTER_NAME, "Native Advanced - HuaweiNativeAd - load() - serverExtras => {contentUrl = $contentUrl}")
             }else{
-                Log.e("TAG", "Native Advanced - HuaweiNativeAd -  load() - localExtras & serverExtras => contentUrl key is empty")
+                Log.e(ADAPTER_NAME, "Native Advanced - HuaweiNativeAd -  load() - localExtras & serverExtras => contentUrl key is empty")
             }
 
             /**
@@ -342,27 +342,27 @@ class native_advanced : CustomEventNative() {
             adLoader.loadAd(adRequest)
             MoPubLog.log(getAdNetworkId(), AdapterLogEvent.LOAD_ATTEMPTED, ADAPTER_NAME)
 
-            Log.d("TAG", "Native Advanced - HuaweiNativeAd - load() - adapter attempting to load ad")
+            Log.d(ADAPTER_NAME, "Native Advanced - HuaweiNativeAd - load() - adapter attempting to load ad")
         }
 
         override fun prepare(view: View) {
             // Adding click and impression trackers is handled by the HuaweiNativeRenderer,
             // do nothing here.
-            Log.d("TAG", "Native Advanced - HuaweiNativeAd - prepare()")
+            Log.d(ADAPTER_NAME, "Native Advanced - HuaweiNativeAd - prepare()")
         }
 
         override fun clear(view: View) {
             mCustomEventNativeListener = null
-            Log.d("TAG", "Native Advanced - HuaweiNativeAd - clear()")
+            Log.d(ADAPTER_NAME, "Native Advanced - HuaweiNativeAd - clear()")
         }
 
         override fun destroy() {
             huaweiNativeAd?.destroy()
-            Log.d("TAG", "Native Advanced - HuaweiNativeAd - destroy()")
+            Log.d(ADAPTER_NAME, "Native Advanced - HuaweiNativeAd - destroy()")
         }
 
         private fun preCacheImages(context: Context, imageUrls: List<String>) {
-            Log.d("TAG", "Native Advanced - HuaweiNativeAd - preCacheImages()")
+            Log.d(ADAPTER_NAME, "Native Advanced - HuaweiNativeAd - preCacheImages()")
             NativeImageHelper.preCacheImages(context, imageUrls,
                 object : NativeImageHelper.ImageListener {
                     override fun onImagesCached() {
@@ -374,7 +374,7 @@ class native_advanced : CustomEventNative() {
                                 AdapterLogEvent.LOAD_SUCCESS,
                                 ADAPTER_NAME
                             )
-                            Log.d("TAG", "Native Advanced - HuaweiNativeAd - preCacheImages() - onImagesCached triggered")
+                            Log.d(ADAPTER_NAME, "Native Advanced - HuaweiNativeAd - preCacheImages() - onImagesCached triggered")
                         }
                     }
 
@@ -386,13 +386,13 @@ class native_advanced : CustomEventNative() {
                             errorCode
                         )
 
-                        Log.d("TAG", "Native Advanced - HuaweiNativeAd - preCacheImages() - onImagesFailedToCache triggered, errorCode: $errorCode")
+                        Log.d(ADAPTER_NAME, "Native Advanced - HuaweiNativeAd - preCacheImages() - onImagesFailedToCache triggered, errorCode: $errorCode")
                     }
                 })
         }
 
         private fun prepareHuaweiNativeAd(mHuaweiNativeAd: NativeAd) {
-            Log.d("TAG", "Native Advanced - HuaweiNativeAd - prepareHuaweiNativeAd()")
+            Log.d(ADAPTER_NAME, "Native Advanced - HuaweiNativeAd - prepareHuaweiNativeAd()")
 
             val images: List<Image> = mHuaweiNativeAd.images
             mainImageUrl = images[0].uri.toString().replace(HTTP_TAG, HTTPS_TAG)
@@ -416,7 +416,7 @@ class native_advanced : CustomEventNative() {
     }
 
     private fun getAdNetworkId(): String? {
-        Log.d("TAG", "Native Advanced - getAdNetworkId()")
+        Log.d(ADAPTER_NAME, "Native Advanced - getAdNetworkId()")
         return mAdUnitId
     }
 

@@ -45,7 +45,7 @@ class interstitial : BaseAd() {
     private var mAdUnitId: String? = null
 
     override fun load(context: Context, adData: AdData) {
-        Log.d("TAG", "Interstitial - load()")
+        Log.d(ADAPTER_NAME, "Interstitial - load()")
 
         try {
             Preconditions.checkNotNull(context)
@@ -54,7 +54,7 @@ class interstitial : BaseAd() {
             val extras = adData.extras
 
             if (extras.isNullOrEmpty()) {
-                Log.d("TAG", "Interstitial - load() - adData.extras is empty or null")
+                Log.d(ADAPTER_NAME, "Interstitial - load() - adData.extras is empty or null")
 
                 MoPubLog.log(
                     adNetworkId, AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
@@ -67,9 +67,9 @@ class interstitial : BaseAd() {
                 mAdUnitId = extras[AD_UNIT_ID_KEY]
                 mHuaweiAdsAdapterConfiguration.setCachedInitializationParameters(context, extras)
 
-                Log.d("TAG", "Interstitial - load() - adData.extras => {adUnitID = $mAdUnitId}")
+                Log.d(ADAPTER_NAME, "Interstitial - load() - adData.extras => {adUnitID = $mAdUnitId}")
             } else {
-                Log.e("TAG", "Interstitial - load() - adData.extras is not contain adUnitID")
+                Log.e(ADAPTER_NAME, "Interstitial - load() - adData.extras is not contain adUnitID")
                 MoPubLog.log(
                     adNetworkId, AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
                     MoPubErrorCode.NETWORK_NO_FILL.intCode,
@@ -85,16 +85,16 @@ class interstitial : BaseAd() {
             builder.setRequestOrigin("MoPub")
 
             if (!extras.containsKey(CONTENT_URL_KEY)) {
-                Log.e("TAG", "Interstitial - load() - adData.extras is not contain contentUrl")
+                Log.e(ADAPTER_NAME, "Interstitial - load() - adData.extras is not contain contentUrl")
             }
 
             val contentUrl = extras[CONTENT_URL_KEY]
 
             if (!TextUtils.isEmpty(contentUrl)) {
                 builder.setTargetingContentUrl(contentUrl)
-                Log.d("TAG", "Interstitial - load() - adData.extras => {contentUrl = $contentUrl}")
+                Log.d(ADAPTER_NAME, "Interstitial - load() - adData.extras => {contentUrl = $contentUrl}")
             } else {
-                Log.e("TAG", "Interstitial - load() - adData.extras => contentUrl key is empty")
+                Log.e(ADAPTER_NAME, "Interstitial - load() - adData.extras => contentUrl key is empty")
             }
 
             /**
@@ -107,26 +107,26 @@ class interstitial : BaseAd() {
 
             mHuaweiInterstitialAd!!.loadAd(adRequest)
             MoPubLog.log(adNetworkId, AdapterLogEvent.LOAD_ATTEMPTED, ADAPTER_NAME)
-            Log.d("TAG", "Interstitial - load() - adapter attempting to load ad")
+            Log.d(ADAPTER_NAME, "Interstitial - load() - adapter attempting to load ad")
 
         } catch (e: Exception) {
             val stacktrace =
                 StringWriter().also { e.printStackTrace(PrintWriter(it)) }.toString().trim()
-            Log.e("TAG", "Interstitial - loadAd() - Request Interstitial Ad Failed: $stacktrace")
+            Log.e(ADAPTER_NAME, "Interstitial - loadAd() - Request Interstitial Ad Failed: $stacktrace")
             mHuaweiInterstitialAd!!.adListener.onAdFailed(AdParam.ErrorCode.INNER)
         }
 
     }
 
     override fun show() {
-        Log.d("TAG", "Interstitial - show()")
+        Log.d(ADAPTER_NAME, "Interstitial - show()")
 
         MoPubLog.log(adNetworkId, AdapterLogEvent.SHOW_ATTEMPTED, ADAPTER_NAME)
         if (mHuaweiInterstitialAd!!.isLoaded) {
-            Log.d("TAG", "Interstitial - show() - InterstitialAd isLoaded true")
+            Log.d(ADAPTER_NAME, "Interstitial - show() - InterstitialAd isLoaded true")
             mHuaweiInterstitialAd!!.show()
         } else {
-            Log.e("TAG", "Interstitial - show() - InterstitialAd isLoaded false")
+            Log.e(ADAPTER_NAME, "Interstitial - show() - InterstitialAd isLoaded false")
             MoPubLog.log(
                 adNetworkId, AdapterLogEvent.SHOW_FAILED, ADAPTER_NAME,
                 MoPubErrorCode.NETWORK_NO_FILL.intCode,
@@ -137,25 +137,25 @@ class interstitial : BaseAd() {
     }
 
     override fun onInvalidate() {
-        Log.d("TAG", "Interstitial - onInvalidate()")
+        Log.d(ADAPTER_NAME, "Interstitial - onInvalidate()")
         if (mHuaweiInterstitialAd != null) {
-            Log.d("TAG", "Interstitial - onInvalidate() - InterstitialAd is not null")
+            Log.d(ADAPTER_NAME, "Interstitial - onInvalidate() - InterstitialAd is not null")
             mHuaweiInterstitialAd!!.adListener = null
             mHuaweiInterstitialAd = null
         } else {
-            Log.d("TAG", "Interstitial - onInvalidate() - InterstitialAd is null")
+            Log.d(ADAPTER_NAME, "Interstitial - onInvalidate() - InterstitialAd is null")
         }
     }
 
     override fun getLifecycleListener(): LifecycleListener? {
-        Log.d("TAG", "Interstitial - getLifecycleListener()")
+        Log.d(ADAPTER_NAME, "Interstitial - getLifecycleListener()")
         return null
     }
 
     override fun getAdNetworkId(): String {
-        Log.d("TAG", "Interstitial - getAdNetworkId()")
+        Log.d(ADAPTER_NAME, "Interstitial - getAdNetworkId()")
         return if (mAdUnitId == null) {
-            Log.d("TAG", "Interstitial - getAdNetworkId() - mAdUnitId is null")
+            Log.d(ADAPTER_NAME, "Interstitial - getAdNetworkId() - mAdUnitId is null")
             ""
         } else {
             mAdUnitId!!
@@ -166,20 +166,20 @@ class interstitial : BaseAd() {
         launcherActivity: Activity,
         adData: AdData
     ): Boolean {
-        Log.d("TAG", "Interstitial - checkAndInitializeSdk()")
+        Log.d(ADAPTER_NAME, "Interstitial - checkAndInitializeSdk()")
         return false
     }
 
     private inner class InterstitialAdListener : AdListener() {
         override fun onAdClosed() {
-            Log.d("TAG", "Interstitial - InterstitialAdListener - onAdClosed()")
+            Log.d(ADAPTER_NAME, "Interstitial - InterstitialAdListener - onAdClosed()")
             mInteractionListener?.onAdDismissed()
         }
 
         override fun onAdFailed(loadAdError: Int) {
 
             Log.e(
-                "TAG",
+                ADAPTER_NAME,
                 "Interstitial - InterstitialAdListener - onAdFailed - Failed to load Huawei interstitial with message: ${
                     getMoPubErrorCode(
                         loadAdError
@@ -202,18 +202,18 @@ class interstitial : BaseAd() {
         }
 
         override fun onAdLeave() {
-            Log.d("TAG", "Interstitial - InterstitialAdListener - onAdLeave()")
+            Log.d(ADAPTER_NAME, "Interstitial - InterstitialAdListener - onAdLeave()")
             mInteractionListener?.onAdClicked()
         }
 
         override fun onAdLoaded() {
-            Log.d("TAG", "Interstitial - InterstitialAdListener - onAdLoaded()")
+            Log.d(ADAPTER_NAME, "Interstitial - InterstitialAdListener - onAdLoaded()")
             MoPubLog.log(adNetworkId, AdapterLogEvent.LOAD_SUCCESS, ADAPTER_NAME)
             mLoadListener?.onAdLoaded()
         }
 
         override fun onAdOpened() {
-            Log.d("TAG", "Interstitial - InterstitialAdListener - onAdOpened()")
+            Log.d(ADAPTER_NAME, "Interstitial - InterstitialAdListener - onAdOpened()")
             MoPubLog.log(adNetworkId, AdapterLogEvent.SHOW_SUCCESS, ADAPTER_NAME)
             if (mInteractionListener != null) {
                 mInteractionListener!!.onAdShown()

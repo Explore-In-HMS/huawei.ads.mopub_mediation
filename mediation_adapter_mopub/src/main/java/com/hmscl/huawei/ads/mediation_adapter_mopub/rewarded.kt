@@ -54,17 +54,17 @@ class rewarded : BaseAd() {
     private var mHuaweiAdsAdapterConfiguration = HuaweiAdsAdapterConfiguration()
 
     override fun getLifecycleListener(): LifecycleListener? {
-        Log.d("TAG", "Rewarded - getLifecycleListener()")
+        Log.d(ADAPTER_NAME, "Rewarded - getLifecycleListener()")
         return null
     }
 
     override fun getAdNetworkId(): String {
-        Log.d("TAG", "Rewarded - getAdNetworkId()")
+        Log.d(ADAPTER_NAME, "Rewarded - getAdNetworkId()")
         return if (mAdUnitId == null) "" else mAdUnitId!!
     }
 
     override fun onInvalidate() {
-        Log.d("TAG", "Rewarded - onInvalidate()")
+        Log.d(ADAPTER_NAME, "Rewarded - onInvalidate()")
         if (mRewardedAd != null) {
             mRewardedAd = null
         }
@@ -75,7 +75,7 @@ class rewarded : BaseAd() {
         launcherActivity: Activity,
         adData: AdData
     ): Boolean {
-        Log.d("TAG", "Rewarded - checkAndInitializeSdk()")
+        Log.d(ADAPTER_NAME, "Rewarded - checkAndInitializeSdk()")
 
         Preconditions.checkNotNull(launcherActivity)
         Preconditions.checkNotNull(adData)
@@ -83,24 +83,24 @@ class rewarded : BaseAd() {
             val extras = adData.extras
 
             if (extras.isNullOrEmpty()) {
-                Log.e("TAG", "Rewarded - checkAndInitializeSdk() - adData.extras is empty or null")
+                Log.e(ADAPTER_NAME, "Rewarded - checkAndInitializeSdk() - adData.extras is empty or null")
             }
 
             if (!extras.containsKey(KEY_EXTRA_APPLICATION_ID)) {
                 Log.e(
-                    "TAG",
+                    ADAPTER_NAME,
                     "Rewarded - checkAndInitializeSdk() - adData.extras is not contain appid"
                 )
             }
             if (TextUtils.isEmpty(extras[KEY_EXTRA_APPLICATION_ID])) {
                 Log.e(
-                    "TAG",
+                    ADAPTER_NAME,
                     "Rewarded - checkAndInitializeSdk() - adData.extras => appid key is empty"
                 )
                 HwAds.init(launcherActivity)
             } else {
                 Log.d(
-                    "TAG",
+                    ADAPTER_NAME,
                     "Rewarded - checkAndInitializeSdk() - adData.extras => {appid = ${extras[KEY_EXTRA_APPLICATION_ID]}}"
                 )
                 HwAds.init(launcherActivity, extras[KEY_EXTRA_APPLICATION_ID])
@@ -108,14 +108,14 @@ class rewarded : BaseAd() {
 
             if (!extras.containsKey(AD_UNIT_ID_KEY)) {
                 Log.e(
-                    "TAG",
+                    ADAPTER_NAME,
                     "Rewarded - checkAndInitializeSdk() - adData.extras is not contain adUnitID"
                 )
             }
             mAdUnitId = extras[AD_UNIT_ID_KEY]
             if (TextUtils.isEmpty(mAdUnitId)) {
                 Log.e(
-                    "TAG",
+                    ADAPTER_NAME,
                     "Rewarded - checkAndInitializeSdk() - adData.extras => adUnitID key is empty"
                 )
                 MoPubLog.log(
@@ -127,7 +127,7 @@ class rewarded : BaseAd() {
                 return false
             } else {
                 Log.d(
-                    "TAG",
+                    ADAPTER_NAME,
                     "Rewarded - checkAndInitializeSdk() - adData.extras => {adUnitID = ${extras[AD_UNIT_ID_KEY]}}"
                 )
             }
@@ -143,22 +143,22 @@ class rewarded : BaseAd() {
     override fun load(context: Context, adData: AdData) {
 
         try{
-            Log.d("TAG", "Rewarded - load()")
+            Log.d(ADAPTER_NAME, "Rewarded - load()")
 
             setAutomaticImpressionAndClickTracking(false)
             val extras = adData.extras
 
             if (extras.isNullOrEmpty()) {
-                Log.e("TAG", "Rewarded - load() - adData.extras is empty or null")
+                Log.e(ADAPTER_NAME, "Rewarded - load() - adData.extras is empty or null")
             }
 
             if (!extras.containsKey(AD_UNIT_ID_KEY)) {
-                Log.e("TAG", "Rewarded - load() - adData.extras is not contain adUnitID")
+                Log.e(ADAPTER_NAME, "Rewarded - load() - adData.extras is not contain adUnitID")
             }
 
             mAdUnitId = extras[AD_UNIT_ID_KEY]!!
             if (TextUtils.isEmpty(mAdUnitId)) {
-                Log.e("TAG", "Rewarded - load() - adData.extras => adUnitID key is empty")
+                Log.e(ADAPTER_NAME, "Rewarded - load() - adData.extras => adUnitID key is empty")
                 MoPubLog.log(
                     adNetworkId, AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
                     MoPubErrorCode.ADAPTER_CONFIGURATION_ERROR.intCode,
@@ -167,12 +167,12 @@ class rewarded : BaseAd() {
                 mLoadListener?.onAdLoadFailed(MoPubErrorCode.ADAPTER_CONFIGURATION_ERROR)
                 return
             } else {
-                Log.d("TAG", "Rewarded - load() - adData.extras => {adUnitID = $mAdUnitId}")
+                Log.d(ADAPTER_NAME, "Rewarded - load() - adData.extras => {adUnitID = $mAdUnitId}")
             }
 
             if (context !is Activity) {
                 Log.e(
-                    "TAG",
+                    ADAPTER_NAME,
                     "Rewarded - load() - Context passed to load was not an activity. This is a bug in MoPub"
                 )
                 MoPubLog.log(
@@ -188,15 +188,15 @@ class rewarded : BaseAd() {
             builder.setRequestOrigin("MoPub")
 
             if (!extras.containsKey(CONTENT_URL_KEY)) {
-                Log.e("TAG", "Rewarded - load() - adData.extras is not contain contentUrl")
+                Log.e(ADAPTER_NAME, "Rewarded - load() - adData.extras is not contain contentUrl")
             }
 
             val contentUrl = extras[CONTENT_URL_KEY]
             if (!TextUtils.isEmpty(contentUrl)) {
-                Log.d("TAG", "Rewarded - load() - adData.extras => {contentUrl = $contentUrl}")
+                Log.d(ADAPTER_NAME, "Rewarded - load() - adData.extras => {contentUrl = $contentUrl}")
                 builder.setTargetingContentUrl(contentUrl)
             } else {
-                Log.e("TAG", "Rewarded - load() - adData.extras => contentUrl key is empty")
+                Log.e(ADAPTER_NAME, "Rewarded - load() - adData.extras => contentUrl key is empty")
             }
 
             /**
@@ -209,11 +209,11 @@ class rewarded : BaseAd() {
             val adRequest = builder.build()
             mRewardedAd!!.loadAd(adRequest, mRewardedAdLoadCallback)
             MoPubLog.log(adNetworkId, AdapterLogEvent.LOAD_ATTEMPTED, ADAPTER_NAME)
-            Log.d("TAG", "Rewarded - load() - adapter attempting to load ad")
+            Log.d(ADAPTER_NAME, "Rewarded - load() - adapter attempting to load ad")
         }catch (e: Exception) {
             val stacktrace =
                 StringWriter().also { e.printStackTrace(PrintWriter(it)) }.toString().trim()
-            Log.e("TAG", "Native Basic - loadNativeAd() - Request Native Ad Failed: $stacktrace")
+            Log.e(ADAPTER_NAME, "Native Basic - loadNativeAd() - Request Native Ad Failed: $stacktrace")
             mRewardedAd?.rewardAdListener?.onRewardAdFailedToLoad(AdParam.ErrorCode.INNER)
         }
 
@@ -221,18 +221,18 @@ class rewarded : BaseAd() {
 
     private fun hasVideoAvailable(): Boolean {
         Log.d(
-            "TAG",
+            ADAPTER_NAME,
             "Rewarded - hasVideoAvailable() : ${(mRewardedAd != null && mIsLoaded).toString()}"
         )
         return mRewardedAd != null && mIsLoaded
     }
 
     override fun show() {
-        Log.d("TAG", "Rewarded - show()")
+        Log.d(ADAPTER_NAME, "Rewarded - show()")
         MoPubLog.log(adNetworkId, AdapterLogEvent.SHOW_ATTEMPTED, ADAPTER_NAME)
         if (hasVideoAvailable() && mWeakActivity != null && mWeakActivity!!.get() != null) {
             mRewardedAd!!.show(mWeakActivity!!.get(), mRewardedAdCallback)
-            Log.d("TAG", "Rewarded - show() - Rewarded ad showed successfully")
+            Log.d(ADAPTER_NAME, "Rewarded - show() - Rewarded ad showed successfully")
         } else {
             MoPubLog.log(
                 adNetworkId, AdapterLogEvent.SHOW_FAILED, ADAPTER_NAME,
@@ -240,14 +240,14 @@ class rewarded : BaseAd() {
                 MoPubErrorCode.NETWORK_NO_FILL
             )
             mInteractionListener?.onAdFailed(getMoPubErrorCode(AdParam.ErrorCode.NO_AD)!!)
-            Log.e("TAG", "Rewarded - show() - Rewarded ad show failed")
+            Log.e(ADAPTER_NAME, "Rewarded - show() - Rewarded ad show failed")
         }
     }
 
     private val mRewardedAdLoadCallback = object : RewardAdLoadListener() {
         override fun onRewardAdFailedToLoad(loadAdError: Int) {
             Log.e(
-                "TAG",
+                ADAPTER_NAME,
                 "Rewarded - RewardAdLoadListener - onRewardAdFailedToLoad() - Failed to load Huawei rewarded with loadError: $loadAdError"
             )
 
@@ -261,7 +261,7 @@ class rewarded : BaseAd() {
         }
 
         override fun onRewardedLoaded() {
-            Log.d("TAG", "Rewarded - RewardAdLoadListener - onRewardedLoaded()")
+            Log.d(ADAPTER_NAME, "Rewarded - RewardAdLoadListener - onRewardedLoaded()")
 
             mIsLoaded = true
             MoPubLog.log(adNetworkId, AdapterLogEvent.LOAD_SUCCESS, ADAPTER_NAME)
@@ -271,7 +271,7 @@ class rewarded : BaseAd() {
 
     private val mRewardedAdCallback = object : RewardAdStatusListener() {
         override fun onRewardAdOpened() {
-            Log.d("TAG", "Rewarded - RewardAdStatusListener - onRewardAdOpened()")
+            Log.d(ADAPTER_NAME, "Rewarded - RewardAdStatusListener - onRewardAdOpened()")
 
             MoPubLog.log(adNetworkId, AdapterLogEvent.SHOW_SUCCESS, ADAPTER_NAME)
             if (mInteractionListener != null) {
@@ -281,14 +281,14 @@ class rewarded : BaseAd() {
         }
 
         override fun onRewardAdClosed() {
-            Log.d("TAG", "Rewarded - RewardAdStatusListener - onRewardAdClosed()")
+            Log.d(ADAPTER_NAME, "Rewarded - RewardAdStatusListener - onRewardAdClosed()")
 
             MoPubLog.log(adNetworkId, AdapterLogEvent.DID_DISAPPEAR, ADAPTER_NAME)
             mInteractionListener?.onAdDismissed()
         }
 
         override fun onRewarded(rewardItem: Reward) {
-            Log.d("TAG", "Rewarded - RewardAdStatusListener - onRewarded()")
+            Log.d(ADAPTER_NAME, "Rewarded - RewardAdStatusListener - onRewarded()")
 
             MoPubLog.log(
                 adNetworkId, AdapterLogEvent.SHOULD_REWARD, ADAPTER_NAME,
@@ -304,7 +304,7 @@ class rewarded : BaseAd() {
 
         override fun onRewardAdFailedToShow(loadAdError: Int) {
             Log.e(
-                "TAG",
+                ADAPTER_NAME,
                 "Rewarded - RewardAdStatusListener - onRewardAdFailedToShow() - Failed to load Huawei rewarded video with message ${
                     getMoPubErrorCode(loadAdError)!!.name
                 }. Caused by: $loadAdError"

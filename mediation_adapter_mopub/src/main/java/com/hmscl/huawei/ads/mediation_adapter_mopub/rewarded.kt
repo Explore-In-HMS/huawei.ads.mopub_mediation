@@ -39,6 +39,8 @@ import com.mopub.common.logging.MoPubLog.AdapterLogEvent
 import com.mopub.mobileads.AdData
 import com.mopub.mobileads.BaseAd
 import com.mopub.mobileads.MoPubErrorCode
+import java.io.PrintWriter
+import java.io.StringWriter
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -139,73 +141,82 @@ class rewarded : BaseAd() {
     }
 
     override fun load(context: Context, adData: AdData) {
-        Log.d("TAG", "Rewarded - load()")
 
-        setAutomaticImpressionAndClickTracking(false)
-        val extras = adData.extras
+        try{
+            Log.d("TAG", "Rewarded - load()")
 
-        if (extras.isNullOrEmpty()) {
-            Log.e("TAG", "Rewarded - load() - adData.extras is empty or null")
+            setAutomaticImpressionAndClickTracking(false)
+            val extras = adData.extras
+
+            if (extras.isNullOrEmpty()) {
+                Log.e("TAG", "Rewarded - load() - adData.extras is empty or null")
+            }
+
+            if (!extras.containsKey(AD_UNIT_ID_KEY)) {
+                Log.e("TAG", "Rewarded - load() - adData.extras is not contain adUnitID")
+            }
+
+            mAdUnitId = extras[AD_UNIT_ID_KEY]!!
+            if (TextUtils.isEmpty(mAdUnitId)) {
+                Log.e("TAG", "Rewarded - load() - adData.extras => adUnitID key is empty")
+                MoPubLog.log(
+                    adNetworkId, AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
+                    MoPubErrorCode.ADAPTER_CONFIGURATION_ERROR.intCode,
+                    MoPubErrorCode.ADAPTER_CONFIGURATION_ERROR
+                )
+                mLoadListener?.onAdLoadFailed(MoPubErrorCode.ADAPTER_CONFIGURATION_ERROR)
+                return
+            } else {
+                Log.d("TAG", "Rewarded - load() - adData.extras => {adUnitID = $mAdUnitId}")
+            }
+
+            if (context !is Activity) {
+                Log.e(
+                    "TAG",
+                    "Rewarded - load() - Context passed to load was not an activity. This is a bug in MoPub"
+                )
+                MoPubLog.log(
+                    adNetworkId, AdapterLogEvent.CUSTOM, ADAPTER_NAME, "Context passed to load " +
+                            "was not an Activity. This is a bug in MoPub."
+                )
+                mLoadListener?.onAdLoadFailed(MoPubErrorCode.ADAPTER_CONFIGURATION_ERROR)
+                return
+            }
+            mWeakActivity = WeakReference(context)
+            mRewardedAd = RewardAd(context, mAdUnitId)
+            val builder = AdParam.Builder()
+            builder.setRequestOrigin("MoPub")
+
+            if (!extras.containsKey(CONTENT_URL_KEY)) {
+                Log.e("TAG", "Rewarded - load() - adData.extras is not contain contentUrl")
+            }
+
+            val contentUrl = extras[CONTENT_URL_KEY]
+            if (!TextUtils.isEmpty(contentUrl)) {
+                Log.d("TAG", "Rewarded - load() - adData.extras => {contentUrl = $contentUrl}")
+                builder.setTargetingContentUrl(contentUrl)
+            } else {
+                Log.e("TAG", "Rewarded - load() - adData.extras => contentUrl key is empty")
+            }
+
+            /**
+             * Prepare Child-protection keys
+             */
+            val requestConfigurationBuilder = prepareBuilderViaExtras(extras)
+            val requestConfiguration = requestConfigurationBuilder.build()
+            HwAds.setRequestOptions(requestConfiguration)
+
+            val adRequest = builder.build()
+            mRewardedAd!!.loadAd(adRequest, mRewardedAdLoadCallback)
+            MoPubLog.log(adNetworkId, AdapterLogEvent.LOAD_ATTEMPTED, ADAPTER_NAME)
+            Log.d("TAG", "Rewarded - load() - adapter attempting to load ad")
+        }catch (e: Exception) {
+            val stacktrace =
+                StringWriter().also { e.printStackTrace(PrintWriter(it)) }.toString().trim()
+            Log.e("TAG", "Native Basic - loadNativeAd() - Request Native Ad Failed: $stacktrace")
+            mRewardedAd?.rewardAdListener?.onRewardAdFailedToLoad(AdParam.ErrorCode.INNER)
         }
 
-        if (!extras.containsKey(AD_UNIT_ID_KEY)) {
-            Log.e("TAG", "Rewarded - load() - adData.extras is not contain adUnitID")
-        }
-
-        mAdUnitId = extras[AD_UNIT_ID_KEY]!!
-        if (TextUtils.isEmpty(mAdUnitId)) {
-            Log.e("TAG", "Rewarded - load() - adData.extras => adUnitID key is empty")
-            MoPubLog.log(
-                adNetworkId, AdapterLogEvent.LOAD_FAILED, ADAPTER_NAME,
-                MoPubErrorCode.ADAPTER_CONFIGURATION_ERROR.intCode,
-                MoPubErrorCode.ADAPTER_CONFIGURATION_ERROR
-            )
-            mLoadListener?.onAdLoadFailed(MoPubErrorCode.ADAPTER_CONFIGURATION_ERROR)
-            return
-        } else {
-            Log.d("TAG", "Rewarded - load() - adData.extras => {adUnitID = $mAdUnitId}")
-        }
-
-        if (context !is Activity) {
-            Log.e(
-                "TAG",
-                "Rewarded - load() - Context passed to load was not an activity. This is a bug in MoPub"
-            )
-            MoPubLog.log(
-                adNetworkId, AdapterLogEvent.CUSTOM, ADAPTER_NAME, "Context passed to load " +
-                        "was not an Activity. This is a bug in MoPub."
-            )
-            mLoadListener?.onAdLoadFailed(MoPubErrorCode.ADAPTER_CONFIGURATION_ERROR)
-            return
-        }
-        mWeakActivity = WeakReference(context)
-        mRewardedAd = RewardAd(context, mAdUnitId)
-        val builder = AdParam.Builder()
-        builder.setRequestOrigin("MoPub")
-
-        if (!extras.containsKey(CONTENT_URL_KEY)) {
-            Log.e("TAG", "Rewarded - load() - adData.extras is not contain contentUrl")
-        }
-
-        val contentUrl = extras[CONTENT_URL_KEY]
-        if (!TextUtils.isEmpty(contentUrl)) {
-            Log.d("TAG", "Rewarded - load() - adData.extras => {contentUrl = $contentUrl}")
-            builder.setTargetingContentUrl(contentUrl)
-        } else {
-            Log.e("TAG", "Rewarded - load() - adData.extras => contentUrl key is empty")
-        }
-
-        /**
-         * Prepare Child-protection keys
-         */
-        val requestConfigurationBuilder = prepareBuilderViaExtras(extras)
-        val requestConfiguration = requestConfigurationBuilder.build()
-        HwAds.setRequestOptions(requestConfiguration)
-
-        val adRequest = builder.build()
-        mRewardedAd!!.loadAd(adRequest, mRewardedAdLoadCallback)
-        MoPubLog.log(adNetworkId, AdapterLogEvent.LOAD_ATTEMPTED, ADAPTER_NAME)
-        Log.d("TAG", "Rewarded - load() - adapter attempting to load ad")
     }
 
     private fun hasVideoAvailable(): Boolean {
